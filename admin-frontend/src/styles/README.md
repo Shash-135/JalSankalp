@@ -1,0 +1,1 @@
+Design tokens and shared styles live here. Tailwind is primary; extend with CSS variables or global utilities as needed.

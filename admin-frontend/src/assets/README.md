@@ -1,0 +1,1 @@
+Drop logos, icons, and static assets for the JANSANKALP dashboard here.
