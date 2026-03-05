@@ -1,0 +1,1 @@
+Place static images, icons, or QR illustrations here.
