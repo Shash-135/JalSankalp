@@ -1,7 +1,7 @@
 import React from 'react';
 import { statusBadge } from '../../utils/formatters';
 
-const DataTable = ({ title, description, columns, data }) => {
+const DataTable = ({ title, description, columns, data, onViewAll, renderActions }) => {
   return (
     <div className="card-surface p-5">
       <div className="flex items-center justify-between mb-4">
@@ -9,9 +9,14 @@ const DataTable = ({ title, description, columns, data }) => {
           <div className="text-sm text-slate-500">{description}</div>
           <div className="text-lg font-semibold text-slate-800">{title}</div>
         </div>
-        <button className="px-3 py-2 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary/90 shadow">
-          View All
-        </button>
+        {onViewAll && (
+          <button 
+            onClick={onViewAll}
+            className="px-3 py-2 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary/90 shadow transition-colors"
+          >
+            View All
+          </button>
+        )}
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
@@ -22,6 +27,7 @@ const DataTable = ({ title, description, columns, data }) => {
                   {col.label}
                 </th>
               ))}
+              {renderActions && <th className="py-2 font-semibold text-right">Actions</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -32,6 +38,11 @@ const DataTable = ({ title, description, columns, data }) => {
                     {col.key === 'status' ? statusBadge(row[col.key]) : row[col.key]}
                   </td>
                 ))}
+                {renderActions && (
+                  <td className="py-2 text-right">
+                    {renderActions(row)}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

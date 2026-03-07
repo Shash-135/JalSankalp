@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DataTable from '../../components/tables/DataTable';
 import { useAppContext } from '../../context/AppContext';
+import AddOperatorModal from '../../components/forms/AddOperatorModal';
+import EditOperatorModal from '../../components/forms/EditOperatorModal';
 
 const OperatorsPage = () => {
-  const { operators } = useAppContext();
+  const { operators, refreshData } = useAppContext();
+  const [showModal, setShowModal] = useState(false);
+  const [editingOperator, setEditingOperator] = useState(null);
 
   return (
     <div className="grid gap-6">
@@ -12,7 +16,7 @@ const OperatorsPage = () => {
           <div className="text-sm text-slate-500">Shift allocation</div>
           <h2 className="text-xl font-semibold text-slate-800">Operator Management</h2>
         </div>
-        <button className="px-4 py-2 rounded-xl bg-primary text-white font-semibold shadow">Add Operator</button>
+        <button onClick={() => setShowModal(true)} className="px-4 py-2 rounded-xl bg-primary text-white font-semibold shadow hover:bg-primary/90">Add Operator</button>
       </div>
 
       <DataTable
@@ -25,7 +29,30 @@ const OperatorsPage = () => {
           { key: 'status', label: 'Status' },
         ]}
         data={operators}
+        renderActions={(row) => (
+          <button 
+            onClick={() => setEditingOperator(row)}
+            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+          >
+            Edit Profile
+          </button>
+        )}
       />
+
+      {showModal && (
+        <AddOperatorModal 
+          onClose={() => setShowModal(false)}
+          onSaved={refreshData}
+        />
+      )}
+
+      {editingOperator && (
+        <EditOperatorModal 
+          operator={editingOperator}
+          onClose={() => setEditingOperator(null)}
+          onSaved={refreshData}
+        />
+      )}
     </div>
   );
 };

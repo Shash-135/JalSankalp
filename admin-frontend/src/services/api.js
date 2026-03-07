@@ -1,12 +1,15 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://api.jansankalp.local',
+  baseURL: 'http://localhost:5000/api',
   timeout: 8000,
 });
 
 api.interceptors.request.use((config) => {
-  // Stub for auth token; extend with real token handling later.
+  const token = localStorage.getItem('admin_token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
   config.headers['X-Requested-With'] = 'XMLHttpRequest';
   return config;
 });

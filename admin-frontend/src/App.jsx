@@ -9,6 +9,7 @@ import ComplaintsPage from './pages/Complaints/ComplaintsPage';
 import ReportsPage from './pages/Reports/ReportsPage';
 import LoginPage from './pages/Login/LoginPage';
 import ProfilePage from './pages/Profile/ProfilePage';
+import LogsPage from './pages/Logs/LogsPage';
 
 const AppLayout = () => (
   <div className="min-h-screen flex bg-slate-50">
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/operators" element={<OperatorsPage />} />
         <Route path="/complaints" element={<ComplaintsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/logs" element={<LogsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>

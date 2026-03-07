@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardCard from '../../components/dashboard/DashboardCard';
 import ChartCard from '../../components/dashboard/ChartCard';
 import DataTable from '../../components/tables/DataTable';
@@ -6,6 +7,7 @@ import useDashboard from '../../hooks/useDashboard';
 
 const DashboardPage = () => {
   const { cards, pumps, operators, complaints, usageChart, complaintDistribution } = useDashboard();
+  const navigate = useNavigate();
 
   return (
     <div className="grid gap-6">
@@ -50,6 +52,7 @@ const DashboardPage = () => {
           <DataTable
             title="Pump List"
             description="Priority overview"
+            onViewAll={() => navigate('/pumps')}
             columns={[
               { key: 'id', label: 'ID' },
               { key: 'name', label: 'Name' },
@@ -63,6 +66,7 @@ const DashboardPage = () => {
         <DataTable
           title="Operator Roster"
           description="Current shifts"
+          onViewAll={() => navigate('/operators')}
           columns={[
             { key: 'name', label: 'Operator' },
             { key: 'region', label: 'Region' },
@@ -76,6 +80,7 @@ const DashboardPage = () => {
       <DataTable
         title="Complaint Queue"
         description="Recent tickets"
+        onViewAll={() => navigate('/complaints')}
         columns={[
           { key: 'id', label: 'Ticket' },
           { key: 'subject', label: 'Subject' },

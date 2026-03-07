@@ -3,19 +3,19 @@ import ChartCard from '../../components/dashboard/ChartCard';
 import { useAppContext } from '../../context/AppContext';
 
 const ReportsPage = () => {
-  const { usageChart, complaintDistribution } = useAppContext();
+  const { usageChart, complaintDistribution, operatorPerformanceChart } = useAppContext();
 
   return (
     <div className="grid gap-6">
       <div className="card-surface p-6">
         <div className="text-sm text-slate-500">Analytics and insights</div>
-        <h2 className="text-xl font-semibold text-slate-800">Reports & Analytics</h2>
+        <h2 className="text-xl font-semibold text-slate-800">Reports &amp; Analytics</h2>
         <p className="text-sm text-slate-500 mt-2">
           Export summaries for the Gram Panchayat meetings and daily briefings.
         </p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-3">
         <ChartCard
           title="Weekly Volume Trend"
           description="Kiloliters delivered"
@@ -30,6 +30,13 @@ const ReportsPage = () => {
           data={complaintDistribution}
           options={{ plugins: { legend: { position: 'right' } } }}
         />
+        <ChartCard
+          title="Operator Performance"
+          description="Total operations logged"
+          type="bar"
+          data={operatorPerformanceChart}
+          options={{ plugins: { legend: { display: false } } }}
+        />
       </div>
 
       <div className="card-surface p-6 grid gap-3">
@@ -39,7 +46,8 @@ const ReportsPage = () => {
             (item) => (
               <button
                 key={item}
-                className="flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200 hover:border-primary/40 hover:shadow-sm text-sm font-semibold text-slate-700"
+                onClick={() => alert(`Initiating export for: ${item}...\n(The document will be downloaded shortly)`)}
+                className="flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200 hover:border-primary/40 hover:shadow-sm text-sm font-semibold text-slate-700 transition"
               >
                 {item}
                 <span className="text-primary">&gt;</span>

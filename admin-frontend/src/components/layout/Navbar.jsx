@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchInput from '../forms/SearchInput';
+import { useAppContext } from '../../context/AppContext';
 
 const pageTitles = {
   '/dashboard': 'Dashboard Overview',
@@ -13,7 +14,18 @@ const pageTitles = {
 
 const Navbar = () => {
   const location = useLocation();
-  const title = pageTitles[location.pathname] || 'JANSANKALP';
+  const title = pageTitles[location.pathname] || 'JALSANKALP';
+  const { adminUser } = useAppContext();
+
+  const userName = adminUser?.name || 'Admin User';
+  const userRole = adminUser?.role || 'Control Room Admin';
+  const initials = userName
+    .split(' ')
+    .filter(Boolean)
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 
   return (
     <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-slate-200">
@@ -27,13 +39,16 @@ const Navbar = () => {
           <SearchInput placeholder="Search pumps, operators, complaints" />
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-right">
-            <div className="text-sm font-semibold text-slate-800">A. Kumar</div>
-            <div className="text-xs text-slate-500">Control Room Admin</div>
+          <div className="text-right hidden sm:block">
+            <div className="text-sm font-semibold text-slate-800">{userName}</div>
+            <div className="text-xs text-slate-500">{userRole}</div>
           </div>
-          <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">
-            JK
-          </div>
+          <button 
+            onClick={() => window.location.href='/profile'}
+            className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+          >
+            {initials}
+          </button>
         </div>
       </div>
     </header>
