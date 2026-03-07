@@ -6,7 +6,7 @@ const complaintController = require('../controllers/complaintController');
 
 // Admin Routes
 router.get('/', authMiddleware, adminAuth, complaintController.getAllComplaints);
-router.put('/:id/resolve', authMiddleware, adminAuth, complaintController.resolveComplaint);
+router.put('/:id/resolve', authMiddleware, adminAuth, upload.single('resolution_photo'), complaintController.resolveComplaint);
 
 // Villager / Public Routes (Assume JWT auth for villagers or open POST if no deep auth required, but standard is authMiddleware)
 // The requirement: "Villager routes can be public" -> let's make POST /api/complaints public, or use villager JWT.

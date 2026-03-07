@@ -30,11 +30,24 @@ const getPumpById = async (req, res) => {
 const getPumpByQR = async (req, res) => {
     try {
         const { qr } = req.params;
+        const decodedQR = decodeURIComponent(qr).trim();
+        
+        console.log(`\n[QR SCAN] Raw param: "${qr}"`);
+        console.log(`[QR SCAN] Decoded+Trimmed: "${decodedQR}"`);
+
+        // Also print all QR codes in DB to compare
+        const [all] = await pool.query('SELECT id, qr_code FROM Pump');
+        console.log('[QR SCAN] All QR codes in DB:', all.map(p => `"${p.qr_code}"`).join(', '));
+
         const [rows] = await pool.query(
-            `SELECT p.*, a.name as location FROM Pump p LEFT JOIN Area a ON p.area_id = a.id WHERE p.qr_code = ?`,
-            [qr]
+            'SELECT p.*, a.name as location FROM Pump p LEFT JOIN Area a ON p.area_id = a.id WHERE TRIM(p.qr_code) = ?',
+            [decodedQR]
         );
-        if (rows.length === 0) return res.status(404).json({ message: 'Pump not found for this QR code' });
+        if (rows.length === 0) {
+            console.log(`[QR SCAN] No match found for: "${decodedQR}"`);
+            return res.status(404).json({ message: 'Pump not found for this QR code' });
+        }
+        console.log(`[QR SCAN] Match found! Pump ID: ${rows[0].id}`);
         res.json(rows[0]);
     } catch (err) {
         console.error(err);

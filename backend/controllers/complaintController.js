@@ -53,9 +53,17 @@ const createComplaint = async (req, res) => {
 
 const resolveComplaint = async (req, res) => {
     try {
+        const { note } = req.body;
+        const resolutionPhotoUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        
         await pool.query(
-            'UPDATE Complaint SET status = "resolved", resolved_at = CURRENT_TIMESTAMP WHERE id = ?', 
-            [req.params.id]
+            `UPDATE Complaint 
+             SET status = "resolved", 
+                 admin_notes = ?,
+                 resolution_photo_url = ?,
+                 resolved_at = CURRENT_TIMESTAMP 
+             WHERE id = ?`, 
+            [note || null, resolutionPhotoUrl, req.params.id]
         );
         res.json({ message: 'Complaint resolved successfully' });
     } catch (err) {
@@ -72,7 +80,12 @@ const trackComplaint = async (req, res) => {
         }
         
         const [rows] = await pool.query(`
-            SELECT c.id, c.status, c.created_at, c.resolved_at, p.name as pump_name, v.mobile 
+            SELECT 
+                c.id, c.status, c.issue_type, c.description,
+                c.photo_url, c.admin_notes, c.resolution_photo_url,
+                c.created_at, c.resolved_at,
+                p.name as pump_name,
+                v.mobile, v.name as villager_name
             FROM Complaint c
             JOIN Villager v ON c.villager_id = v.id
             JOIN Pump p ON c.pump_id = p.id
