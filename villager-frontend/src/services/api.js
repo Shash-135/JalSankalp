@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: `http://${window.location.hostname}:5000/api`,
+  // Use relative path — Vite proxies /api to the backend in dev,
+  // avoiding the mixed-content block on HTTPS pages.
+  baseURL: '/api',
   timeout: 8000,
 });
 

@@ -14,5 +14,19 @@ export default defineConfig({
     port: 5174,
     host: true,
     https: hasCerts ? { key: fs.readFileSync(keyPath), cert: fs.readFileSync(certPath) } : false,
+    proxy: {
+      // Proxy all /api calls to the backend — avoids mixed-content block on HTTPS
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Also proxy /uploads so photo images load over HTTPS (no mixed-content block)
+      '/uploads': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 });

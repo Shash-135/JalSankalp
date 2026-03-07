@@ -11,7 +11,7 @@ const PumpInfoPage = () => {
   useEffect(() => {
     const fetchPump = async () => {
       try {
-        const res = await api.get(`/pump/${id}`);
+        const res = await api.get(`/pumps/${id}`);
         setPump(res.data);
       } catch (err) {
         console.error("Error fetching pump details:", err);
@@ -22,8 +22,13 @@ const PumpInfoPage = () => {
     fetchPump();
   }, [id]);
 
-  if (loading) return <div className="text-center p-10">Loading Pump Info...</div>;
-  if (!pump) return <div className="text-center p-10 text-red-500">Pump not found or invalid QR code.</div>;
+  if (loading) return <div className="text-center p-10 text-slate-500 font-semibold">Loading Pump Info...</div>;
+  if (!pump) return (
+    <div className="text-center p-10">
+      <div className="text-red-500 font-bold text-lg mb-4">Pump not found.</div>
+      <Link to="/" className="button-primary">← Scan Again</Link>
+    </div>
+  );
 
   return (
     <div className="grid gap-4">
@@ -34,8 +39,12 @@ const PumpInfoPage = () => {
         lastMaintenance={pump.created_at ? new Date(pump.created_at).toLocaleDateString() : 'N/A'}
         qrId={pump.qr_code || id}
       />
-      <Link to="/complaint" className="button-primary text-center">
-        Report an Issue
+      <Link
+        to="/complaint"
+        state={{ pump_id: pump.id, pump_name: pump.name }}
+        className="button-primary text-center block"
+      >
+        ⚠ Report an Issue with this Pump
       </Link>
     </div>
   );

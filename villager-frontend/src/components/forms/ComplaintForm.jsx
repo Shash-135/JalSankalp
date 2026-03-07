@@ -3,7 +3,7 @@ import api from '../../services/api.js';
 
 const issueTypes = ['No water', 'Low pressure', 'Leakage', 'Noise', 'Electrical issue', 'Other'];
 
-const ComplaintForm = ({ onSubmitted }) => {
+const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
   const [form, setForm] = useState({
     name: '',
     mobile: '',
@@ -11,7 +11,7 @@ const ComplaintForm = ({ onSubmitted }) => {
     area: '',
     issue_type: '',
     description: '',
-    pump_id: '1', // Hardcoded fallback for now, real app reads from route context
+    pump_id: pumpId || '', // Use pump from QR scan, fallback to empty
     image: null,
   });
   const [sending, setSending] = useState(false);
@@ -61,7 +61,7 @@ const ComplaintForm = ({ onSubmitted }) => {
         }
       });
       
-      onSubmitted?.({ complaintId: compRes.data.complaintId || 'Unknown ID', mobile: form.mobile });
+      onSubmitted?.(compRes.data); // Backend returns { id, message }
     } catch (err) {
       setError(err.response?.data?.error || "Failed to submit complaint.");
     } finally {

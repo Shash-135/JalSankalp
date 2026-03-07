@@ -19,29 +19,12 @@ const TrackComplaintPage = () => {
     setError(null);
     setResult(null);
     try {
-      // In a real scenario, this would ideally be an endpoint like GET /api/complaints/:id
-      // For now, since admin gets all, we can mock track it by assuming the backend has an endpoint
-      // Update: Let's assume we can fetch all and filter, or we hit a specific tracker endpoint if we build one
-      
-      // Let's use a standard get but normally we'd pass auth. For public tracking, the backend 
-      // might need a dedicated public endpoint. We'll simulate fetching all and finding it
-      // if public access isn't restricted, or if we rely on the mobile number + id logic.
-      
       const res = await api.post('/complaints/track', {
         mobile: form.mobile,
         complaint_id: form.complaintId
       });
-      
-      const found = res.data;
-      
-      setResult({
-        id: `CMP-${found.id}`,
-        date: new Date(found.created_at).toLocaleDateString(),
-        status: found.status,
-        expectedResolution: found.status === 'resolved' ? 'Resolved' : '24-48 hours',
-        admin_notes: found.admin_notes // In case it gets added later
-      });
-      
+      // Pass the full response - ComplaintStatusCard handles display
+      setResult(res.data);
     } catch (err) {
       setError(err.response?.data?.message || "Complaint not found. Please check your details.");
     } finally {
