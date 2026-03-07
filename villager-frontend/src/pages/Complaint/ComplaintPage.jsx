@@ -5,11 +5,11 @@ const ComplaintPage = () => {
   const [submitted, setSubmitted] = useState(null);
 
   return (
-    <div className="grid gap-4">
-      <div className="card p-5 text-center">
-        <div className="text-xs uppercase tracking-[0.2em] text-primary">Step 2</div>
-        <h2 className="text-xl font-bold text-slate-800">Submit a Complaint</h2>
-        <p className="text-base text-slate-600">Provide details about the pump issue. You will receive a complaint ID.</p>
+    <div className="grid gap-6">
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 text-center">
+        <div className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Step 2</div>
+        <h2 className="text-2xl font-black text-slate-900 mb-2">Submit a Grievance</h2>
+        <p className="text-sm font-medium text-slate-500">Provide official details about the pump issue to receive a tracking ID.</p>
       </div>
 
       <ComplaintForm onSubmitted={setSubmitted} />

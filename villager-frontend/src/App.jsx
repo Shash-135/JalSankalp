@@ -10,12 +10,14 @@ import FeedbackPage from './pages/Feedback/FeedbackPage.jsx';
 import AwarenessPage from './pages/Awareness/AwarenessPage.jsx';
 
 const AppShell = () => (
-  <div className="min-h-screen flex flex-col bg-bg">
-    <Header />
-    <main className="flex-1 px-4 py-6 max-w-4xl mx-auto w-full">
-      <Outlet />
-    </main>
-    <Footer />
+  <div className="min-h-screen bg-slate-200 flex justify-center">
+    <div className="w-full max-w-md bg-bg shadow-2xl flex flex-col relative overflow-hidden min-h-screen">
+      <Header />
+      <main className="flex-1 px-4 py-8 w-full">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
   </div>
 );
 

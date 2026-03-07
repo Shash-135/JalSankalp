@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #2563eb;
-  --color-secondary: #0f766e;
-  --color-bg: #f3f4f6;
-  --color-ink: #111827;
+  --color-primary: #1e3a8a;
+  --color-secondary: #ea580c;
+  --color-bg: #f8fafc;
+  --color-ink: #0f172a;
 }
 
 * {
@@ -15,23 +15,23 @@
 
 body {
   margin: 0;
-  font-family: 'Nunito', system-ui, sans-serif;
+  font-family: 'Roboto', system-ui, sans-serif;
   background: var(--color-bg);
   color: var(--color-ink);
 }
 
 .button-primary {
-  @apply w-full py-3 rounded-2xl bg-primary text-white font-semibold text-lg shadow-soft hover:bg-primary/90 transition;
+  @apply w-full py-3 rounded-md bg-primary text-white font-bold text-lg shadow-soft hover:bg-primary/90 transition border border-transparent hover:border-blue-900;
 }
 
 .card {
-  @apply bg-white rounded-2xl shadow-soft border border-slate-100;
+  @apply bg-white rounded-lg shadow-sm border border-slate-300;
 }
 
 .input-field {
-  @apply w-full mt-2 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/40 focus:outline-none text-base;
+  @apply w-full mt-1 px-4 py-3 rounded-md border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none text-base bg-slate-50;
 }
 
 .label {
-  @apply text-sm font-semibold text-slate-700;
+  @apply text-sm font-bold text-slate-800 uppercase tracking-wide;
 }
