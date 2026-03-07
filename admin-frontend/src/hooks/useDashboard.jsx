@@ -49,7 +49,16 @@ const useDashboard = () => {
     },
   ];
 
-  return { cards, pumps, operators, complaints, usageChart, complaintDistribution };
+  // Map raw rows to the shape the dashboard summary table expects
+  const dashboardComplaints = complaints.slice(0, 10).map(c => ({
+    id: c.id,
+    subject: c.issue_type || '—',
+    village: c.villager_name || c.location || '—',
+    status: c.status,
+    logged: c.created_at ? new Date(c.created_at).toLocaleDateString('en-IN') : '—',
+  }));
+
+  return { cards, pumps, operators, complaints: dashboardComplaints, usageChart, complaintDistribution };
 };
 
 export default useDashboard;

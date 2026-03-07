@@ -3,30 +3,36 @@ import DataTable from '../../components/tables/DataTable';
 import { useAppContext } from '../../context/AppContext';
 import ResolveComplaintModal from '../../components/forms/ResolveComplaintModal';
 
+import api from '../../services/api';
+
+// Derive backend base from the configured Axios baseURL (removes trailing /api)
+const BASE = api.defaults.baseURL.replace(/\/api$/, '');
+
 const ComplaintsPage = () => {
-  const { complaints, areas, refreshData } = useAppContext();
+  const { complaints, refreshData } = useAppContext();
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [filterType, setFilterType] = useState('all');
-
-  const columns = [
-    { key: 'id', label: 'Ticket' },
-    { key: 'subject', label: 'Subject' },
-    { key: 'village', label: 'Village' },
-    { key: 'status', label: 'Status' },
-    { key: 'logged', label: 'Logged' },
-    { key: 'action', label: 'Action' }
-  ];
+  const [previewImg, setPreviewImg] = useState(null);
 
   const filteredComplaints = complaints.filter(c => {
     if (filterType === 'all') return true;
-    if (filterType === 'pending') return c.status === 'pending';
-    if (filterType === 'resolved') return c.status === 'resolved';
-    return true;
+    return c.status === filterType;
   });
 
   const enrichedComplaints = filteredComplaints.map(c => ({
     ...c,
-    action: c.status !== 'resolved' && c.status !== 'Resolved' ? (
+    villager: c.villager_name || '—',
+    pump: c.pump_name || '—',
+    type: c.issue_type || '—',
+    photo: c.photo_url ? (
+      <img
+        src={`${BASE}${c.photo_url}`}
+        alt="Villager photo"
+        className="w-12 h-12 object-cover rounded-lg cursor-pointer border border-slate-200 hover:scale-105 transition-transform"
+        onClick={() => setPreviewImg(`${BASE}${c.photo_url}`)}
+      />
+    ) : <span className="text-slate-300 text-xs">No photo</span>,
+    action: c.status !== 'resolved' ? (
       <button 
         onClick={() => setSelectedComplaintId(c.id)} 
         className="text-xs bg-accent text-primary px-3 py-1 rounded-full font-bold hover:bg-opacity-80 transition"
@@ -34,9 +40,19 @@ const ComplaintsPage = () => {
         Resolve
       </button>
     ) : (
-      <span className="text-xs text-green-600 font-bold">Done</span>
+      <span className="text-xs text-green-600 font-bold">✓ Done</span>
     )
   }));
+
+  const columns = [
+    { key: 'id', label: '#' },
+    { key: 'villager', label: 'Villager' },
+    { key: 'pump', label: 'Pump' },
+    { key: 'type', label: 'Issue' },
+    { key: 'photo', label: 'Photo' },
+    { key: 'status', label: 'Status' },
+    { key: 'action', label: 'Action' },
+  ];
 
   return (
     <div className="grid gap-6">
@@ -64,6 +80,14 @@ const ComplaintsPage = () => {
         columns={columns}
         data={enrichedComplaints}
       />
+
+      {/* Full-size photo preview */}
+      {previewImg && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setPreviewImg(null)}>
+          <img src={previewImg} alt="Full size" className="max-w-full max-h-full rounded-xl shadow-2xl" />
+          <div className="absolute top-4 right-4 text-white text-2xl cursor-pointer">✕</div>
+        </div>
+      )}
 
       {selectedComplaintId && (
         <ResolveComplaintModal

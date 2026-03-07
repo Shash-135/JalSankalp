@@ -1,9 +1,20 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { HiX, HiDownload } from 'react-icons/hi';
 import { QRCodeCanvas } from 'qrcode.react';
+import api from '../../services/api';
 
-const ViewQRCodeModal = ({ pump, onClose }) => {
+const ViewQRCodeModal = ({ pump: pumpProp, onClose }) => {
   const qrRef = useRef();
+  const [pump, setPump] = useState(pumpProp);
+
+  // Fetch full pump data to ensure qr_code field is always present
+  useEffect(() => {
+    if (pumpProp?.id) {
+      api.get(`/pumps/${pumpProp.id}`)
+        .then(res => setPump(res.data))
+        .catch(() => setPump(pumpProp)); // fallback to what was passed
+    }
+  }, [pumpProp?.id]);
 
   const handleDownload = () => {
     const canvas = qrRef.current.querySelector('canvas');
@@ -15,6 +26,14 @@ const ViewQRCodeModal = ({ pump, onClose }) => {
       link.click();
     }
   };
+
+  if (!pump?.qr_code) return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div className="text-slate-500">Loading QR Code...</div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
@@ -29,28 +48,20 @@ const ViewQRCodeModal = ({ pump, onClose }) => {
         <div className="p-8 flex flex-col items-center">
           <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100" ref={qrRef}>
             <QRCodeCanvas 
-              value={pump.qr_code || `JALSANKALP_PUMP_${pump.id}`} 
-              size={200}
+              value={pump.qr_code}
+              size={220}
               level="H"
               includeMargin={true}
-              imageSettings={{
-                src: '/vite.svg', // Assuming vite logo as placeholder, could be JalSankalp logo
-                x: undefined,
-                y: undefined,
-                height: 24,
-                width: 24,
-                excavate: true,
-              }}
             />
           </div>
           
           <div className="mt-6 text-center">
             <h4 className="font-bold text-slate-800 text-lg">{pump.name}</h4>
             <div className="inline-block px-3 py-1 mt-2 tracking-wider text-xs font-mono font-medium rounded-md bg-slate-100 text-slate-600 border border-slate-200">
-              {pump.qr_code || `PUMP_ID:${pump.id}`}
+              {pump.qr_code}
             </div>
             <p className="text-sm text-slate-500 mt-4 leading-relaxed">
-              Print and attach this QR code to the physical pump. Operators must scan it to log active sessions.
+              Print and attach this QR code to the physical pump. Both operators and villagers can scan it.
             </p>
           </div>
 

@@ -77,15 +77,10 @@ export const AppProvider = ({ children }) => {
 
       setData({
         stats: { totalPumps: pumps.length, activePumps, inactivePumps, pendingComplaints, resolvedComplaints },
-        pumps: pumps.map(p => ({ id: p.id, name: p.name, location: p.location || 'N/A', status: p.status, uptime: 'N/A' })),
-        operators: operators.map(o => ({ id: o.id, name: o.name, shift: 'Standard', status: o.status, region: o.region || 'N/A' })),
-        complaints: complaints.map(c => ({ 
-          id: c.id, 
-          subject: c.issue_type, 
-          village: c.villager_name || 'Villager', 
-          status: c.status, 
-          logged: new Date(c.created_at).toLocaleDateString() 
-        })),
+        // Keep full raw objects so all pages get every field they need
+        pumps: pumps.map(p => ({ ...p, uptime: 'N/A' })),
+        operators: operators.map(o => ({ ...o, shift: 'Standard' })),
+        complaints: complaints, // raw rows — photo_url, villager_name, pump_name etc. all preserved
         areas,
         usageChart,
         complaintDistribution,
