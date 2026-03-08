@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import api from '../services/api';
 
 const AppContext = createContext(null);
@@ -16,8 +16,9 @@ export const AppProvider = ({ children }) => {
     adminUser: null
   });
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const refreshData = async () => {
+  const refreshData = useCallback(async () => {
     setLoading(true);
     try {
       const [pumpsRes, opsRes, compsRes, usageRes, distRes, areasRes, operatorPerfRes, adminRes] = await Promise.all([
@@ -92,13 +93,21 @@ export const AppProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     refreshData();
-  }, []);
+  }, [refreshData]);
 
-  return <AppContext.Provider value={{ ...data, loading, refreshData }}>{children}</AppContext.Provider>;
+  const contextValue = useMemo(() => ({
+    ...data,
+    loading,
+    refreshData,
+    searchQuery,
+    setSearchQuery
+  }), [data, loading, refreshData, searchQuery]);
+
+  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = () => {

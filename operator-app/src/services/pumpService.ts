@@ -2,8 +2,11 @@ import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { PumpLog } from '../components/LogCard';
+import { STORAGE_KEYS } from '../constants';
 
-const OFFLINE_QUEUE_KEY = '@pump_offline_queue';
+// ─── Single unified offline queue ──────────────────────────────────────────
+// All offline logs are stored under STORAGE_KEYS.offlineLogs so that
+// syncService.ts and pumpService.ts share the same queue and "Sync" button works.
 
 export type Pump = {
   id: string;
@@ -11,6 +14,8 @@ export type Pump = {
   location?: string;
   status?: string;
   lastServiced?: string;
+  operatorName?: string;
+  lastOperationTime?: string;
 };
 
 type ActionPayload = {
@@ -21,23 +26,57 @@ type ActionPayload = {
   notes?: string;
   photoUri?: string;
   duration?: number;
+  mobile?: string;
+  name?: string;
 };
 
-const getOfflineQueue = async (): Promise<ActionPayload[]> => {
+// ─── Offline queue helpers (use shared STORAGE_KEYS.offlineLogs) ────────────
+
+export const getOfflineQueue = async (): Promise<ActionPayload[]> => {
   try {
-    const queueData = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-    return queueData ? JSON.parse(queueData) : [];
-  } catch (e) {
+    const raw = await AsyncStorage.getItem(STORAGE_KEYS.offlineLogs);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
     return [];
   }
 };
 
-const saveToOfflineQueue = async (payload: ActionPayload) => {
+export const saveToOfflineQueue = async (payload: ActionPayload) => {
   const queue = await getOfflineQueue();
   queue.push(payload);
-  await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+  await AsyncStorage.setItem(STORAGE_KEYS.offlineLogs, JSON.stringify(queue));
 };
 
+// ─── Called by syncService.ts ───────────────────────────────────────────────
+export const syncPumpLogs = async (logs: PumpLog[]) => {
+  const rawLogs = logs.filter(l => l.action === 'start' || l.action === 'stop');
+  const reports = logs.filter(l => l.action === 'report');
+
+  if (rawLogs.length > 0) {
+    await api.post('/pump/sync', { logs: rawLogs });
+  }
+
+  for (const report of reports) {
+    const formData = new FormData();
+    formData.append('pump_id', report.pump_id);
+    formData.append('issue_type', 'maintenance');
+    if (report.notes)    formData.append('description', report.notes);
+    if ((report as any).mobile) formData.append('mobile', (report as any).mobile);
+    if ((report as any).name)   formData.append('name',   (report as any).name);
+    if ((report as any).photoUri) {
+      formData.append('photo', {
+        uri:  (report as any).photoUri,
+        type: 'image/jpeg',
+        name: 'maintenance.jpg',
+      } as any);
+    }
+    await api.post('/complaints', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+};
+
+// ─── pumpService.ts sync (also used by App.tsx NetInfo listener) ────────────
 export const syncOfflineLogs = async () => {
   const isOnline = await NetInfo.fetch().then(s => s.isConnected);
   if (!isOnline) return { status: 'offline' };
@@ -46,32 +85,8 @@ export const syncOfflineLogs = async () => {
   if (queue.length === 0) return { status: 'synced', count: 0 };
 
   try {
-    // Separate logs and reports (reports need multipart)
-    const rawLogs = queue.filter(item => item.action === 'start' || item.action === 'stop');
-    const reports = queue.filter(item => item.action === 'report');
-
-    if (rawLogs.length > 0) {
-      await api.post('/pump/sync', { logs: rawLogs });
-    }
-
-    for (const report of reports) {
-      const formData = new FormData();
-      formData.append('pump_id', report.pump_id);
-      if (report.notes) formData.append('comment', report.notes);
-      if (report.photoUri) {
-        formData.append('photo', {
-          uri: report.photoUri,
-          type: 'image/jpeg',
-          name: 'maintenance.jpg',
-        } as any);
-      }
-      await api.post('/pump/report', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-    }
-
-    // Clear queue upon success
-    await AsyncStorage.removeItem(OFFLINE_QUEUE_KEY);
+    await syncPumpLogs(queue as unknown as PumpLog[]);
+    await AsyncStorage.removeItem(STORAGE_KEYS.offlineLogs);
     return { status: 'synced', count: queue.length };
   } catch (err) {
     console.error('Offline sync failed', err);
@@ -79,17 +94,19 @@ export const syncOfflineLogs = async () => {
   }
 };
 
+// ─── Pump API calls ─────────────────────────────────────────────────────────
+
 export const fetchPump = async (qrCodeValue: string): Promise<Pump> => {
-  // The QR code contains the qr_code string from the database (same as villager frontend).
-  // We look up the pump by its QR value using the shared public endpoint.
   const res = await api.get(`/pumps/qr/${encodeURIComponent(qrCodeValue)}`);
   const p = res.data;
   return {
-     id: String(p.id),   // This is the real numeric pump ID used for start/stop operations
-     name: p.name,
-     location: p.location,
-     status: p.status,
-     lastServiced: p.created_at
+    id:                String(p.id),
+    name:              p.name,
+    location:          p.location,
+    status:            p.status,
+    lastServiced:      p.created_at,
+    operatorName:      p.operator_name,
+    lastOperationTime: p.last_operation_time,
   };
 };
 
@@ -97,17 +114,17 @@ export const startPump = async (payload: { pumpId: string; operatorId: string; s
   const isOnline = await NetInfo.fetch().then(s => s.isConnected);
   if (!isOnline) {
     await saveToOfflineQueue({
-      action: 'start',
-      pump_id: payload.pumpId,
+      action:    'start',
+      pump_id:   payload.pumpId,
       timestamp: payload.startTime,
-      notes: ''
+      notes:     '',
     });
     return { status: 'queued_offline', offline: true };
   }
 
   const res = await api.post('/pump/start', {
     pump_id: payload.pumpId,
-    notes: '',
+    notes:   '',
   });
   return res.data;
 };
@@ -116,17 +133,17 @@ export const stopPump = async (payload: { pumpId: string; operatorId: string; en
   const isOnline = await NetInfo.fetch().then(s => s.isConnected);
   if (!isOnline) {
     await saveToOfflineQueue({
-      action: 'stop',
-      pump_id: payload.pumpId,
+      action:    'stop',
+      pump_id:   payload.pumpId,
       timestamp: payload.endTime,
-      notes: ''
+      notes:     '',
     });
     return { status: 'queued_offline', offline: true };
   }
 
   const res = await api.post('/pump/stop', {
     pump_id: payload.pumpId,
-    notes: '',
+    notes:   '',
   });
   return res.data;
 };
@@ -136,29 +153,42 @@ export const fetchWorkHistory = async (): Promise<PumpLog[]> => {
   return res.data || [];
 };
 
-export const submitMaintenance = async (payload: { pumpId: string; operatorId: string; comment: string; photoUri?: string }) => {
+export const submitMaintenance = async (payload: {
+  pumpId: string;
+  operatorId: string;
+  operatorMobile?: string;
+  operatorName?: string;
+  comment: string;
+  photoUri?: string;
+}) => {
   const isOnline = await NetInfo.fetch().then(s => s.isConnected);
   if (!isOnline) {
     await saveToOfflineQueue({
-      action: 'report',
-      pump_id: payload.pumpId,
-      notes: payload.comment,
-      photoUri: payload.photoUri
+      action:   'report',
+      pump_id:  payload.pumpId,
+      notes:    payload.comment,
+      photoUri: payload.photoUri,
+      mobile:   payload.operatorMobile,
+      name:     payload.operatorName,
     });
     return { status: 'queued_offline', offline: true };
   }
 
   const formData = new FormData();
-  formData.append('pump_id', payload.pumpId);
-  formData.append('comment', payload.comment);
+  formData.append('pump_id',     payload.pumpId);
+  formData.append('description', payload.comment);
+  formData.append('issue_type',  'maintenance');
+  if (payload.operatorMobile) formData.append('mobile', payload.operatorMobile);
+  if (payload.operatorName)   formData.append('name',   payload.operatorName);
   if (payload.photoUri) {
     formData.append('photo', {
-      uri: payload.photoUri,
+      uri:  payload.photoUri,
       type: 'image/jpeg',
       name: 'maintenance.jpg',
     } as any);
   }
-  const res = await api.post('/pump/report', formData, {
+
+  const res = await api.post('/complaints', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return res.data;

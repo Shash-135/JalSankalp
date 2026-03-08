@@ -8,6 +8,7 @@ const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
   const [note, setNote] = useState('');
   const [photo, setPhoto] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     // Fetch full complaint detail including villager photo
@@ -19,6 +20,7 @@ const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setSaving(true);
     try {
       const formData = new FormData();
@@ -31,7 +33,7 @@ const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
       onSaved();
       onClose();
     } catch (err) {
-      alert("Failed to resolve complaint.");
+      setError(err.response?.data?.message || "Failed to resolve complaint.");
       console.error(err);
     } finally {
       setSaving(false);
@@ -43,6 +45,12 @@ const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
       <div className="card-surface p-6 w-full max-w-lg my-4">
         <h3 className="section-title mb-1">Resolve Complaint</h3>
         <p className="text-sm text-slate-500 mb-4">Ticket ID: <strong>#{complaintId}</strong></p>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100">
+            {error}
+          </div>
+        )}
 
         {/* Villager Submitted Details */}
         {complaint && (

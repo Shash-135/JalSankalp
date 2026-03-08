@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { HiRefresh, HiSearch } from 'react-icons/hi';
 import api from '../../services/api.js';
 import ComplaintStatusCard from '../../components/ui/ComplaintStatusCard.jsx';
 
@@ -21,57 +22,70 @@ const TrackComplaintPage = () => {
     try {
       const res = await api.post('/complaints/track', {
         mobile: form.mobile,
-        complaint_id: form.complaintId
+        complaint_id: form.complaintId,
       });
-      // Pass the full response - ComplaintStatusCard handles display
       setResult(res.data);
     } catch (err) {
-      setError(err.response?.data?.message || "Complaint not found. Please check your details.");
+      setError(err.response?.data?.message || 'Complaint not found. Please check your details.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="grid gap-6">
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 text-center">
-        <div className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Live Tracking</div>
-        <h2 className="text-2xl font-black text-slate-900 mb-2">Track Grievance</h2>
-        <p className="text-sm font-medium text-slate-500">Enter your official complaint ID to see the latest status.</p>
+    <div className="grid gap-5">
+      {/* Page Header */}
+      <div className="page-header animate-slide-up grid gap-1.5">
+        <div className="flex items-center gap-2 text-white/70 text-xs font-extrabold uppercase tracking-widest">
+          <HiRefresh className="h-4 w-4" />
+          Live Tracking
+        </div>
+        <h2 className="text-xl md:text-2xl font-black text-white">Track Grievance</h2>
+        <p className="text-sm text-white/75 font-semibold">
+          Enter your complaint ID and mobile to see the latest status.
+        </p>
       </div>
 
-      <form className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 grid gap-5" onSubmit={handleTrack}>
-        {error && <div className="text-red-500 bg-red-50 p-2 text-sm text-center">{error}</div>}
-        <div>
-          <label className="label">Mobile Number</label>
-          <input
-            name="mobile"
-            className="input-field"
-            value={form.mobile}
-            onChange={handleChange}
-            required
-            inputMode="tel"
-            pattern="[0-9]{10}"
-            placeholder="10-digit mobile"
-          />
-        </div>
-        <div>
-          <label className="label">Complaint ID</label>
-          <input
-            name="complaintId"
-            className="input-field"
-            value={form.complaintId}
-            onChange={handleChange}
-            required
-            placeholder="e.g., 1 or CMP-101"
-          />
-        </div>
-        <button type="submit" className="button-primary" disabled={loading}>
-          {loading ? 'Checking...' : 'Check Status'}
-        </button>
-      </form>
+      {/* Responsive: search left, result right on desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <form className="card p-5 grid gap-4" onSubmit={handleTrack}>
+          {error && <div className="error-banner">{error}</div>}
+          <div>
+            <label className="label">Mobile Number</label>
+            <input
+              name="mobile"
+              className="input-field"
+              value={form.mobile}
+              onChange={handleChange}
+              required
+              inputMode="tel"
+              pattern="[0-9]{10}"
+              placeholder="10-digit mobile number"
+            />
+          </div>
+          <div>
+            <label className="label">Complaint ID</label>
+            <input
+              name="complaintId"
+              className="input-field"
+              value={form.complaintId}
+              onChange={handleChange}
+              required
+              placeholder="e.g., 42"
+            />
+          </div>
+          <button type="submit" className="btn-primary flex items-center justify-center gap-2" disabled={loading}>
+            <HiSearch className="h-5 w-5" />
+            {loading ? 'Searching...' : 'Check Status'}
+          </button>
+        </form>
 
-      {result && <ComplaintStatusCard complaint={result} />}
+        {result && (
+          <div className="animate-slide-up">
+            <ComplaintStatusCard complaint={result} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -39,15 +39,14 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer
-      theme={{
-        ...DefaultTheme,
-        colors: { ...DefaultTheme.colors, background: COLORS.background },
-      }}
+      theme={{ ...DefaultTheme, colors: { ...DefaultTheme.colors, background: COLORS.background } }}
     >
       <Stack.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: COLORS.primary },
           headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '800', fontSize: 17 },
+          headerShadowVisible: false,
           contentStyle: { backgroundColor: COLORS.background },
         }}
       >
@@ -55,13 +54,13 @@ const AppNavigator = () => {
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         ) : (
           <>
-            <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
-            <Stack.Screen name="ScanQR" component={ScanQRScreen} options={{ title: 'Scan QR' }} />
+            <Stack.Screen name="Dashboard"   component={DashboardScreen}   options={{ title: 'Dashboard', headerShown: false }} />
+            <Stack.Screen name="ScanQR"      component={ScanQRScreen}      options={{ title: 'Scan QR Code' }} />
             <Stack.Screen name="PumpDetails" component={PumpDetailsScreen} options={{ title: 'Pump Details' }} />
             <Stack.Screen name="PumpControl" component={PumpControlScreen} options={{ title: 'Pump Control' }} />
             <Stack.Screen name="WorkHistory" component={WorkHistoryScreen} options={{ title: 'Work History' }} />
-            <Stack.Screen name="Maintenance" component={MaintenanceScreen} options={{ title: 'Maintenance' }} />
-            <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
+            <Stack.Screen name="Maintenance" component={MaintenanceScreen} options={{ title: 'Maintenance Report' }} />
+            <Stack.Screen name="Settings"    component={SettingsScreen}    options={{ title: 'Settings' }} />
           </>
         )}
       </Stack.Navigator>

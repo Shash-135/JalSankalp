@@ -17,9 +17,10 @@
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 25% 20%, rgba(56, 189, 248, 0.1), transparent 30%),
-    radial-gradient(circle at 80% 0%, rgba(15, 118, 110, 0.12), transparent 25%),
-    var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: radial-gradient(circle at 25% 20%, rgba(56, 189, 248, 0.1), transparent 30%),
+    radial-gradient(circle at 80% 0%, rgba(15, 118, 110, 0.12), transparent 25%);
+  background-attachment: fixed;
   color: var(--color-ink);
   min-height: 100vh;
   font-family: 'Poppins', system-ui, sans-serif;

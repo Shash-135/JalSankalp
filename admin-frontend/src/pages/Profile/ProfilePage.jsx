@@ -47,9 +47,13 @@ const ProfilePage = () => {
 
   return (
     <div className="grid gap-6">
-      <div className="card-surface p-6">
-        <div className="text-sm text-slate-500">User preferences</div>
-        <h2 className="text-xl font-semibold text-slate-800">Profile Settings</h2>
+      <div className="card-surface p-4 sm:p-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-4">
+          <div>
+            <div className="text-sm text-slate-500">User preferences</div>
+            <h2 className="text-xl font-semibold text-slate-800">Profile Settings</h2>
+          </div>
+        </div>
         
         {error && <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>}
         {success && <div className="mt-4 p-3 bg-teal-50 text-teal-700 rounded-lg text-sm">{success}</div>}
@@ -72,15 +76,15 @@ const ProfilePage = () => {
             <input disabled value={profile.phone || ''} className="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500" />
           </div>
         </div>
-        <div className="mt-6 flex gap-3">
-          <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl bg-primary text-white font-semibold shadow hover:bg-primary/90 transition disabled:opacity-50">
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <button onClick={handleSave} disabled={saving} className="w-full sm:w-auto px-6 py-2 rounded-xl bg-primary text-white font-semibold shadow hover:bg-primary/90 transition disabled:opacity-50">
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
-          <button onClick={fetchProfile} className="px-4 py-2 rounded-xl border border-slate-200 font-semibold text-slate-700 hover:bg-slate-50 transition">Reset</button>
+          <button onClick={fetchProfile} className="w-full sm:w-auto px-6 py-2 rounded-xl border border-slate-200 font-semibold text-slate-700 hover:bg-slate-50 transition">Reset</button>
         </div>
       </div>
 
-      <div className="card-surface p-6">
+      <div className="card-surface p-4 sm:p-6">
         <div className="section-title">Notifications</div>
         <div className="grid gap-3 mt-4">
           {["Downtime alerts", "Complaint escalations", "Operator shift changes"].map((item) => (

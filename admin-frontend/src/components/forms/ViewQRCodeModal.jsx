@@ -17,6 +17,7 @@ const ViewQRCodeModal = ({ pump: pumpProp, onClose }) => {
   }, [pumpProp?.id]);
 
   const handleDownload = () => {
+    if (!qrRef.current || !pump?.qr_code) return;
     const canvas = qrRef.current.querySelector('canvas');
     if (canvas) {
       const url = canvas.toDataURL('image/png');

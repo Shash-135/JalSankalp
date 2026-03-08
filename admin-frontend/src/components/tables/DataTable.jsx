@@ -3,7 +3,7 @@ import { statusBadge } from '../../utils/formatters';
 
 const DataTable = ({ title, description, columns, data, onViewAll, renderActions }) => {
   return (
-    <div className="card-surface p-5">
+    <div className="card-surface p-4 sm:p-5 w-full overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="text-sm text-slate-500">{description}</div>

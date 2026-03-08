@@ -1,5 +1,9 @@
 const jwt = require('jsonwebtoken');
 
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('FATAL: JWT_SECRET environment variable is not set. Refusing to start.');
+
+
 const authMiddleware = (req, res, next) => {
     // Get token from header
     const authHeader = req.header('Authorization');
@@ -11,7 +15,7 @@ const authMiddleware = (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded.user; // Contains id and role (admin or operator)
         next();
     } catch (err) {
@@ -42,7 +46,7 @@ const optionalAuth = (req, res, next) => {
     }
     const token = authHeader.split(' ')[1];
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded.user;
     } catch (err) {
         // Just proceed without setting req.user

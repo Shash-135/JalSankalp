@@ -4,16 +4,18 @@ import api from '../../services/api';
 const AddAreaModal = ({ onClose, onSaved }) => {
   const [form, setForm] = useState({ name: '', pincode: '' });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setSaving(true);
     try {
       await api.post('/areas', form);
       onSaved();
       onClose();
     } catch (err) {
-      alert("Failed to create area.");
+      setError(err.response?.data?.message || "Failed to create area.");
     } finally {
       setSaving(false);
     }
@@ -23,6 +25,11 @@ const AddAreaModal = ({ onClose, onSaved }) => {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="card-surface p-6 w-full max-w-sm">
         <h3 className="section-title mb-4">Add Gram Panchayat Area</h3>
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="grid gap-4">
           <div>
             <label className="text-sm font-semibold text-slate-700">Area Name</label>

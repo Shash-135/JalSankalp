@@ -5,17 +5,19 @@ import { useAppContext } from '../../context/AppContext';
 const AddOperatorModal = ({ onClose, onSaved }) => {
   const [form, setForm] = useState({ name: '', mobile: '', password: '', assigned_area_id: '' });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   const { areas } = useAppContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setSaving(true);
     try {
       await api.post('/operator', form);
       onSaved();
       onClose();
     } catch (err) {
-      alert("Failed to register operator.");
+      setError(err.response?.data?.message || "Failed to register operator.");
       console.error(err);
     } finally {
       setSaving(false);
@@ -26,6 +28,11 @@ const AddOperatorModal = ({ onClose, onSaved }) => {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="card-surface p-6 w-full max-w-sm">
         <h3 className="section-title mb-4">Register Operator</h3>
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="grid gap-3">
           <div>
             <label className="text-sm font-semibold text-slate-700">Name</label>

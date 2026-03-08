@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import DataTable from '../../components/tables/DataTable';
 import { useAppContext } from '../../context/AppContext';
 import ResolveComplaintModal from '../../components/forms/ResolveComplaintModal';
@@ -9,15 +9,26 @@ import api from '../../services/api';
 const BASE = api.defaults.baseURL.replace(/\/api$/, '');
 
 const ComplaintsPage = () => {
-  const { complaints, refreshData } = useAppContext();
+  const { complaints, refreshData, searchQuery } = useAppContext();
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [filterType, setFilterType] = useState('all');
   const [previewImg, setPreviewImg] = useState(null);
 
-  const filteredComplaints = complaints.filter(c => {
-    if (filterType === 'all') return true;
-    return c.status === filterType;
-  });
+  const strSearch = (searchQuery || '').toLowerCase();
+
+  const filteredComplaints = useMemo(() => complaints.filter(c => {
+    // Dropdown match
+    const matchesType = filterType === 'all' || c.status === filterType;
+    if (!matchesType) return false;
+
+    // Search text match
+    if (!strSearch) return true;
+    return c.id?.toString().includes(strSearch) || 
+           c.villager_name?.toLowerCase().includes(strSearch) || 
+           c.pump_name?.toLowerCase().includes(strSearch) || 
+           c.issue_type?.toLowerCase().includes(strSearch) || 
+           c.status?.toLowerCase().includes(strSearch);
+  }), [complaints, filterType, strSearch]);
 
   const enrichedComplaints = filteredComplaints.map(c => ({
     ...c,
@@ -56,14 +67,14 @@ const ComplaintsPage = () => {
 
   return (
     <div className="grid gap-6">
-      <div className="card-surface p-6 flex items-center justify-between">
+      <div className="card-surface p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="text-sm text-slate-500">Citizen feedback</div>
           <h2 className="text-xl font-semibold text-slate-800">Complaint Management</h2>
         </div>
-        <div>
+        <div className="w-full md:w-auto mt-2 md:mt-0">
           <select 
-            className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full md:w-auto px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20"
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
           >

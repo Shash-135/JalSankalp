@@ -1,7 +1,7 @@
 const pool = require('../database/db');
 const bcrypt = require('bcryptjs');
 
-const getAdminProfile = async (req, res) => {
+const getAdminProfile = async (req, res, next) => {
     try {
         const adminId = req.user.id;
         const [rows] = await pool.query('SELECT id, name, email FROM Admin WHERE id = ?', [adminId]);
@@ -17,12 +17,11 @@ const getAdminProfile = async (req, res) => {
             phone: '+91 98765 43210'
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const updateAdminProfile = async (req, res) => {
+const updateAdminProfile = async (req, res, next) => {
     try {
         const adminId = req.user.id;
         const { name, email, password } = req.body;
@@ -43,9 +42,26 @@ const updateAdminProfile = async (req, res) => {
         
         res.json({ message: 'Profile updated successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-module.exports = { getAdminProfile, updateAdminProfile };
+const getAllLogs = async (req, res, next) => {
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                l.id, l.action, l.timestamp as time, l.duration,
+                p.name as pump_name, o.name as operator_name 
+            FROM PumpLog l
+            LEFT JOIN Pump p ON l.pump_id = p.id
+            LEFT JOIN Operator o ON l.operator_id = o.id
+            ORDER BY l.timestamp DESC 
+            LIMIT 100
+        `);
+        res.json(rows);
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = { getAdminProfile, updateAdminProfile, getAllLogs };

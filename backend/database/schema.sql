@@ -96,45 +96,4 @@ CREATE TABLE IF NOT EXISTS Feedback (
     FOREIGN KEY (villager_id) REFERENCES Villager(id) ON DELETE CASCADE
 );
 
--- Sample Seed Data
-INSERT INTO Admin (name, email, password_hash) VALUES 
-('Super Admin', 'admin@jalsankalp.local', '$2b$10$CeXasC0iHezxB4gdZLVUyfBw6aP6i1CnZ.sOqEq7m.OaX0tI/N5h2'); -- Password: password123
-
-INSERT INTO Area (name, pincode) VALUES 
-('North Gram Panchayat', '411001'),
-('South Gram Panchayat', '411002'),
-('East Gram Panchayat', '411003'),
-('West Gram Panchayat', '411004'),
-('Central Square', '411005'),
-('River Side', '411006');
-
-INSERT INTO Pump (area_id, qr_code, name, status, installation_date) VALUES 
-(1, 'QR_PUMP_001', 'Main Village Borewell', 'active', '2023-01-15'),
-(2, 'QR_PUMP_002', 'Market Square Pump', 'maintenance', '2022-11-20'),
-(3, 'QR_PUMP_003', 'East Village Pump 1', 'active', '2023-05-10'),
-(4, 'QR_PUMP_004', 'West Village Pump 2', 'active', '2023-06-15'),
-(5, 'QR_PUMP_005', 'Central High Capacity Pump', 'inactive', '2021-02-20'),
-(6, 'QR_PUMP_006', 'River Side Farm Pump', 'maintenance', '2022-08-05'),
-(1, 'QR_PUMP_007', 'North Sub-pump A', 'active', '2024-01-10');
-
-INSERT INTO Operator (name, mobile, password_hash, assigned_area_id, status) VALUES 
-('Ramesh Kumar', '9876543210', '$2b$10$X1zJ.h.c0vA3T1Z2Y1h4o.J/w4V4R8E6lK7.8V7a/B9eRn3fQ3tRy', 1, 'active'), -- Password: password123
-('Vikram Singh', '9876543220', '$2b$10$X1zJ.h.c0vA3T1Z2Y1h4o.J/w4V4R8E6lK7.8V7a/B9eRn3fQ3tRy', 3, 'active'),
-('Amit Patel', '9876543221', '$2b$10$X1zJ.h.c0vA3T1Z2Y1h4o.J/w4V4R8E6lK7.8V7a/B9eRn3fQ3tRy', 4, 'active'),
-('Neha Sharma', '9876543222', '$2b$10$X1zJ.h.c0vA3T1Z2Y1h4o.J/w4V4R8E6lK7.8V7a/B9eRn3fQ3tRy', 5, 'inactive');
-
-INSERT INTO Villager (mobile, name) VALUES 
-('9876543211', 'Suresh Patel'),
-('9876543212', 'Sunita Sharma');
-
-INSERT INTO Complaint (villager_id, pump_id, issue_type, description, status) VALUES 
-(1, 1, 'low_pressure', 'Water pressure is very low since yesterday', 'pending'),
-(2, 2, 'no_water', 'Pump is not dispensing any water', 'resolved'),
-(1, 3, 'motor_noise', 'Loud grinding noise from motor', 'pending'),
-(2, 4, 'leakage', 'Water leaking from the main pipe', 'pending'),
-(1, 5, 'no_power', 'Pump not turning on at all', 'resolved'),
-(2, 6, 'low_pressure', 'Takes 2 hours to fill tank', 'pending');
-
-INSERT INTO PumpLog (pump_id, operator_id, action, notes) VALUES 
-(1, 1, 'start', 'Routine morning start'),
-(1, 1, 'stop', 'Routine stop');
+-- Sample Seed Data Removed

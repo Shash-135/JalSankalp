@@ -6,17 +6,36 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Roboto"', 'system-ui', 'sans-serif'],
+        sans: ['"Nunito"', 'system-ui', 'sans-serif'],
       },
       colors: {
-        primary: '#1e3a8a',    // Government Navy Blue
-        secondary: '#ea580c',  // Saffron/Orange Accent
-        surface: '#ffffff',
-        bg: '#f8fafc',         // Crisp off-white/gray
-        ink: '#0f172a',        // Deep Slate text
+        primary:   '#1a3a8f',
+        secondary: '#ea580c',
+        success:   '#059669',
+        warning:   '#d97706',
+        surface:   '#ffffff',
+        bg:        '#eef2ff',
+        ink:       '#0f172a',
+        muted:     '#64748b',
       },
       boxShadow: {
-        soft: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', // Sharper, standard structural shadow
+        card:  '0 2px 12px rgba(26,58,143,0.08)',
+        lift:  '0 8px 24px rgba(26,58,143,0.14)',
+        inner: 'inset 0 2px 6px rgba(0,0,0,0.06)',
+      },
+      borderRadius: {
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+      },
+      animation: {
+        'fade-in':    'fadeIn 0.3s ease both',
+        'slide-up':   'slideUp 0.35s cubic-bezier(.16,1,.3,1) both',
+        'pulse-ring':  'pulseRing 2s ease-out infinite',
+      },
+      keyframes: {
+        fadeIn:    { from: { opacity: 0 },              to: { opacity: 1 } },
+        slideUp:   { from: { transform: 'translateY(16px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } },
+        pulseRing: { '0%': { transform: 'scale(1)', opacity: 0.7 }, '100%': { transform: 'scale(1.5)', opacity: 0 } },
       },
     },
   },

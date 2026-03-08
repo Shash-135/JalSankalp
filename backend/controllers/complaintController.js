@@ -1,6 +1,6 @@
 const pool = require('../database/db');
 
-const getAllComplaints = async (req, res) => {
+const getAllComplaints = async (req, res, next) => {
     try {
         const [rows] = await pool.query(`
             SELECT c.*, v.mobile as villager_mobile, v.name as villager_name, p.name as pump_name, a.name as location
@@ -17,41 +17,50 @@ const getAllComplaints = async (req, res) => {
     }
 };
 
-const createComplaint = async (req, res) => {
+const createComplaint = async (req, res, next) => {
+    const connection = await pool.getConnection();
     try {
-        // Assume Villager might be authenticated, or we use mobile from body to look them up.
-        // Let's rely on standard logic: if auth token exists, use it, else require mobile in body.
         const { pump_id, issue_type, description, mobile, name } = req.body;
-        let villager_id = req.user ? req.user.id : null;
+
+        // Only use villager id from JWT when the role is villager; operators should submit a mobile to link a villager record
+        let villager_id = (req.user && req.user.role === 'villager') ? req.user.id : null;
+
+        await connection.beginTransaction();
 
         if (!villager_id && mobile) {
             // Check if Villager exists
-            let [vRows] = await pool.query('SELECT id FROM Villager WHERE mobile = ?', [mobile]);
+            let [vRows] = await connection.query('SELECT id FROM Villager WHERE mobile = ?', [mobile]);
             if (vRows.length === 0) {
-                const [ins] = await pool.query('INSERT INTO Villager (mobile, name) VALUES (?, ?)', [mobile, name || '']);
+                const [ins] = await connection.query('INSERT INTO Villager (mobile, name) VALUES (?, ?)', [mobile, name || '']);
                 villager_id = ins.insertId;
             } else {
                 villager_id = vRows[0].id;
             }
         }
 
-        if (!villager_id) return res.status(400).json({ message: 'Villager identification required (mobile number)' });
+        if (!villager_id) {
+            await connection.rollback();
+            return res.status(400).json({ message: 'Villager identification required (mobile number)' });
+        }
 
         const photoUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
-        const [result] = await pool.query(
+        const [result] = await connection.query(
             'INSERT INTO Complaint (villager_id, pump_id, issue_type, description, photo_url) VALUES (?, ?, ?, ?, ?)',
             [villager_id, pump_id, issue_type, description, photoUrl]
         );
 
+        await connection.commit();
         res.status(201).json({ id: result.insertId, message: 'Complaint registered successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        await connection.rollback();
+        next(err);
+    } finally {
+        connection.release();
     }
 };
 
-const resolveComplaint = async (req, res) => {
+const resolveComplaint = async (req, res, next) => {
     try {
         const { note } = req.body;
         const resolutionPhotoUrl = req.file ? `/uploads/${req.file.filename}` : null;
@@ -67,12 +76,11 @@ const resolveComplaint = async (req, res) => {
         );
         res.json({ message: 'Complaint resolved successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const trackComplaint = async (req, res) => {
+const trackComplaint = async (req, res, next) => {
     try {
         const { mobile, complaint_id } = req.body;
         if (!mobile || !complaint_id) {
@@ -98,8 +106,7 @@ const trackComplaint = async (req, res) => {
 
         res.json(rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 

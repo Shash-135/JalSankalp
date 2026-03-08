@@ -2,7 +2,10 @@ const pool = require('../database/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const adminLogin = async (req, res) => {
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('FATAL: JWT_SECRET environment variable is not set.');
+
+const adminLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         
@@ -14,21 +17,15 @@ const adminLogin = async (req, res) => {
         
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-        const payload = {
-            user: { id: admin.id, role: 'admin' }
-        };
-
-        jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '1d' }, (err, token) => {
-            if (err) throw err;
-            res.json({ token, user: { id: admin.id, name: admin.name, email: admin.email, role: 'admin' } });
-        });
+        const payload = { user: { id: admin.id, role: 'admin' } };
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
+        res.json({ token, user: { id: admin.id, name: admin.name, email: admin.email, role: 'admin' } });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const operatorLogin = async (req, res) => {
+const operatorLogin = async (req, res, next) => {
     try {
         const { mobile, password } = req.body;
         
@@ -40,17 +37,11 @@ const operatorLogin = async (req, res) => {
         
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-        const payload = {
-            user: { id: operator.id, role: 'operator' }
-        };
-
-        jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '30d' }, (err, token) => {
-            if (err) throw err;
-            res.json({ token, user: { id: operator.id, name: operator.name, mobile: operator.mobile, role: 'operator' } });
-        });
+        const payload = { user: { id: operator.id, role: 'operator' } };
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '30d' });
+        res.json({ token, user: { id: operator.id, name: operator.name, mobile: operator.mobile, role: 'operator' } });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 

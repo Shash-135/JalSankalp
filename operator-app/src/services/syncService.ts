@@ -1,8 +1,8 @@
 import NetInfo from '@react-native-community/netinfo';
-import { PumpLog } from '../components/LogCard';
-import { getOfflineLogs, clearOfflineLogs, replaceOfflineLogs } from '../storage/offlineStorage';
-import { syncPumpLogs } from './pumpService';
+import { getOfflineQueue, syncPumpLogs } from './pumpService';
 import { OFFLINE_MODE } from '../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants';
 
 export const syncOfflineLogs = async () => {
   if (OFFLINE_MODE) {
@@ -14,22 +14,18 @@ export const syncOfflineLogs = async () => {
     return { synced: false, reason: 'offline' };
   }
 
-  const logs = await getOfflineLogs();
+  // Use the single unified queue (same as pumpService.ts)
+  const logs = await getOfflineQueue();
   if (!logs.length) {
     return { synced: true, message: 'No pending logs' };
   }
 
   try {
-    await syncPumpLogs(logs);
-    await clearOfflineLogs();
-    return { synced: true, count: logs.length };
+    await syncPumpLogs(logs as any);
+    await AsyncStorage.removeItem(STORAGE_KEYS.offlineLogs);
+    return { synced: true, message: `${logs.length} log(s) synced successfully.` };
   } catch (error) {
-    // Keep logs but avoid duplicates
-    await replaceOfflineLogs(logs);
+    console.error('Sync failed:', error);
     return { synced: false, reason: 'server', error };
   }
-};
-
-export const queueOfflineLog = async (log: PumpLog) => {
-  await replaceOfflineLogs([log, ...((await getOfflineLogs()) || [])]);
 };

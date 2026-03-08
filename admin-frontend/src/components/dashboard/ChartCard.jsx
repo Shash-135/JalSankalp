@@ -15,13 +15,13 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Le
 const ChartCard = ({ title, description, type = 'bar', data, options }) => {
   const ChartComponent = type === 'pie' ? Pie : Bar;
   return (
-    <div className="card-surface p-5 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-3">
+    <div className="card-surface p-6 h-full flex flex-col min-h-[350px]">
+      <div className="flex items-start justify-between mb-6">
         <div>
-          <div className="text-sm text-slate-500">{description}</div>
-          <div className="text-lg font-semibold text-slate-800">{title}</div>
+          <div className="text-[13px] font-medium text-slate-500 uppercase tracking-wider">{description}</div>
+          <div className="text-lg font-semibold text-slate-800 leading-tight mt-1">{title}</div>
         </div>
-        <span className="pill bg-primary/10 text-primary">Live</span>
+        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary uppercase tracking-wide">Live</span>
       </div>
       <div className="flex-1 min-h-[260px]">
         <ChartComponent data={data} options={options} />

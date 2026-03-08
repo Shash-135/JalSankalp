@@ -5,14 +5,25 @@ import { COLORS, RADIUS, SPACING } from '../constants';
 type Props = {
   title: string;
   onPress: () => void;
-  type?: 'primary' | 'secondary' | 'ghost';
+  type?: 'primary' | 'secondary' | 'accent' | 'ghost' | 'danger';
   disabled?: boolean;
   loading?: boolean;
 };
 
 const CustomButton: React.FC<Props> = ({ title, onPress, type = 'primary', disabled, loading }) => {
-  const isPrimary = type === 'primary';
+  const isPrimary   = type === 'primary';
+  const isDanger    = type === 'danger';
+  const isAccent    = type === 'accent';
   const isSecondary = type === 'secondary';
+
+  const bgColor = isPrimary   ? COLORS.primary
+                : isDanger    ? COLORS.danger
+                : isAccent    ? COLORS.accent
+                : isSecondary ? COLORS.secondary
+                : 'transparent';
+
+  const textColor = type === 'ghost' ? COLORS.primary : '#fff';
+  const borderColor = type === 'ghost' ? COLORS.cardBorder : bgColor;
 
   return (
     <Pressable
@@ -20,17 +31,15 @@ const CustomButton: React.FC<Props> = ({ title, onPress, type = 'primary', disab
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
-        isPrimary && styles.primary,
-        isSecondary && styles.secondary,
-        type === 'ghost' && styles.ghost,
+        { backgroundColor: bgColor, borderColor },
         (disabled || loading) && styles.disabled,
         pressed && styles.pressed,
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? '#fff' : COLORS.primary} />
+        <ActivityIndicator color={type === 'ghost' ? COLORS.primary : '#fff'} />
       ) : (
-        <Text style={[styles.text, isPrimary && styles.textPrimary]}>{title}</Text>
+        <Text style={[styles.text, { color: textColor }]}>{title}</Text>
       )}
     </Pressable>
   );
@@ -38,38 +47,19 @@ const CustomButton: React.FC<Props> = ({ title, onPress, type = 'primary', disab
 
 const styles = StyleSheet.create({
   base: {
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.md + 2,
     paddingHorizontal: SPACING.lg,
-    borderRadius: RADIUS.md,
+    borderRadius: RADIUS.lg,
     alignItems: 'center',
     marginVertical: SPACING.sm,
-    borderWidth: 1,
-    borderColor: 'transparent',
+    borderWidth: 1.5,
   },
-  primary: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  secondary: {
-    backgroundColor: COLORS.secondary,
-    borderColor: COLORS.secondary,
-  },
-  ghost: {
-    backgroundColor: '#fff',
-    borderColor: COLORS.primary,
-  },
-  disabled: {
-    opacity: 0.7,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
+  disabled: { opacity: 0.5 },
+  pressed: { opacity: 0.8, transform: [{ scale: 0.98 }] },
   text: {
-    color: COLORS.primary,
-    fontWeight: '700',
-  },
-  textPrimary: {
-    color: '#fff',
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
 });
 

@@ -2,7 +2,7 @@ const pool = require('../database/db');
 const qrcode = require('qrcode');
 const { v4: uuidv4 } = require('uuid');
 
-const getAllPumps = async (req, res) => {
+const getAllPumps = async (req, res, next) => {
     try {
         const [rows] = await pool.query(`
             SELECT p.*, a.name as location 
@@ -11,23 +11,21 @@ const getAllPumps = async (req, res) => {
         `);
         res.json(rows);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const getPumpById = async (req, res) => {
+const getPumpById = async (req, res, next) => {
     try {
         const [rows] = await pool.query('SELECT * FROM Pump WHERE id = ?', [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ message: 'Pump not found' });
         res.json(rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const getPumpByQR = async (req, res) => {
+const getPumpByQR = async (req, res, next) => {
     try {
         const { qr } = req.params;
         const decodedQR = decodeURIComponent(qr).trim();
@@ -50,12 +48,11 @@ const getPumpByQR = async (req, res) => {
         console.log(`[QR SCAN] Match found! Pump ID: ${rows[0].id}`);
         res.json(rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const getPumpLogs = async (req, res) => {
+const getPumpLogs = async (req, res, next) => {
     try {
         const [rows] = await pool.query(
             'SELECT * FROM PumpLog WHERE pump_id = ? ORDER BY timestamp DESC LIMIT 20',
@@ -63,12 +60,11 @@ const getPumpLogs = async (req, res) => {
         );
         res.json(rows);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const createPump = async (req, res) => {
+const createPump = async (req, res, next) => {
     try {
         const { area_id, name, installation_date } = req.body;
         const qrContent = `QR_PUMP_${uuidv4()}`;
@@ -84,29 +80,26 @@ const createPump = async (req, res) => {
 
         res.status(201).json({ id: result.insertId, qr_code: qrContent, message: 'Pump created successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const updatePump = async (req, res) => {
+const updatePump = async (req, res, next) => {
     try {
         const { status, name } = req.body;
         await pool.query('UPDATE Pump SET status = COALESCE(?, status), name = COALESCE(?, name) WHERE id = ?', [status, name, req.params.id]);
         res.json({ message: 'Pump updated successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const deletePump = async (req, res) => {
+const deletePump = async (req, res, next) => {
     try {
         await pool.query('DELETE FROM Pump WHERE id = ?', [req.params.id]);
         res.json({ message: 'Pump deleted successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 

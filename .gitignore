@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment files (keep secrets out of git)
+.env
+.env.local
+.env.*.local
+
+# SSL certificates (auto-generated locally)
+villager-frontend/ssl/
+backend/ssl/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test / debug scripts
+backend/test_complaint.js
+backend/test_upload.js
+backend/gen_qr.js
+backend/qr_pump_*.png
+backend/logs
+
+# Editor
+.vscode/
+.idea/

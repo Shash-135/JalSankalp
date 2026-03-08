@@ -1,15 +1,27 @@
 import api from './api';
 import { Operator } from '../context/AuthContext';
 import { OFFLINE_MODE } from '../constants';
+import { decode as atob } from 'base-64';
 
 type LoginPayload = {
-  operatorId: string;
+  mobile: string;
   password: string;
 };
 
 type LoginResponse = {
   token: string;
-  operator: Operator;
+  user: Operator;
+  exp?: number;
+};
+
+const parseJwtExp = (token: string): number | undefined => {
+  try {
+    const payload = token.split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    return typeof decoded.exp === 'number' ? decoded.exp : undefined;
+  } catch {
+    return undefined;
+  }
 };
 
 export const loginRequest = async (payload: LoginPayload): Promise<LoginResponse> => {
@@ -19,12 +31,14 @@ export const loginRequest = async (payload: LoginPayload): Promise<LoginResponse
   }
 
   const response = await api.post('/auth/login', {
-    operator_id: payload.operatorId,
+    mobile: payload.mobile,
     password: payload.password,
   });
   const data = response.data;
+  const exp = parseJwtExp(data.token);
   return {
     token: data.token,
-    operator: data.operator ?? { id: payload.operatorId, name: data?.name ?? 'Operator' },
+    user: data.user,
+    exp,
   };
 };

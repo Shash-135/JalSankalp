@@ -1,7 +1,7 @@
 const pool = require('../database/db');
 const bcrypt = require('bcryptjs');
 
-const getAllOperators = async (req, res) => {
+const getAllOperators = async (req, res, next) => {
     try {
         const [rows] = await pool.query(`
             SELECT o.id, o.name, o.mobile, o.status, o.created_at, a.name as region 
@@ -10,12 +10,11 @@ const getAllOperators = async (req, res) => {
         `);
         res.json(rows);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const createOperator = async (req, res) => {
+const createOperator = async (req, res, next) => {
     try {
         const { name, mobile, password, assigned_area_id } = req.body;
         
@@ -33,12 +32,11 @@ const createOperator = async (req, res) => {
 
         res.status(201).json({ id: result.insertId, message: 'Operator created successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const updateOperator = async (req, res) => {
+const updateOperator = async (req, res, next) => {
     try {
         const { name, mobile, status, assigned_area_id } = req.body;
         await pool.query(
@@ -47,19 +45,32 @@ const updateOperator = async (req, res) => {
         );
         res.json({ message: 'Operator updated successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const deleteOperator = async (req, res) => {
+const deleteOperator = async (req, res, next) => {
     try {
         await pool.query('DELETE FROM Operator WHERE id = ?', [req.params.id]);
         res.json({ message: 'Operator deleted successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-module.exports = { getAllOperators, createOperator, updateOperator, deleteOperator };
+const getOperatorPumps = async (req, res, next) => {
+    try {
+        const [operatorRows] = await pool.query('SELECT assigned_area_id FROM Operator WHERE id = ?', [req.params.id]);
+        if (operatorRows.length === 0) return res.status(404).json({ message: 'Operator not found' });
+        
+        const areaId = operatorRows[0].assigned_area_id;
+        if (!areaId) return res.json([]); // No area assigned
+        
+        const [pumps] = await pool.query('SELECT id, name, status, qr_code FROM Pump WHERE area_id = ?', [areaId]);
+        res.json(pumps);
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = { getAllOperators, createOperator, updateOperator, deleteOperator, getOperatorPumps };

@@ -11,7 +11,7 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
     area: '',
     issue_type: '',
     description: '',
-    pump_id: pumpId || '', // Use pump from QR scan, fallback to empty
+    pump_id: pumpId || '',
     image: null,
   });
   const [sending, setSending] = useState(false);
@@ -28,8 +28,8 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
       setError(null);
       await api.post('/otp/send', { mobile_number: form.mobile });
       setOtpSent(true);
-    } catch (err) {
-      setError("Failed to send OTP. Try again.");
+    } catch {
+      setError('Failed to send OTP. Check your mobile number and try again.');
     }
   };
 
@@ -38,11 +38,9 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
     setSending(true);
     setError(null);
     try {
-      // First verify OTP
       const verifyRes = await api.post('/otp/verify', { mobile_number: form.mobile, otp: form.otp });
       const token = verifyRes.data.token;
 
-      // Submit actual multipart form data
       const formData = new FormData();
       formData.append('villager_name', form.name);
       formData.append('mobile', form.mobile);
@@ -50,52 +48,53 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
       formData.append('issue_type', form.issue_type);
       formData.append('description', form.description);
       formData.append('pump_id', form.pump_id);
-      if (form.image) {
-        formData.append('photo', form.image);
-      }
+      if (form.image) formData.append('photo', form.image);
 
       const compRes = await api.post('/complaints', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` },
       });
-      
-      onSubmitted?.(compRes.data); // Backend returns { id, message }
+      onSubmitted?.(compRes.data);
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to submit complaint.");
+      setError(err.response?.data?.error || 'Failed to submit complaint. Please try again.');
     } finally {
       setSending(false);
     }
   };
 
   return (
-    <form className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 grid gap-5" onSubmit={handleSubmit}>
-      {error && <div className="text-red-600 bg-red-50 border border-red-200 p-3 rounded-md text-sm font-semibold text-center">{error}</div>}
+    <form className="card p-5 grid gap-4" onSubmit={handleSubmit}>
+      {error && <div className="error-banner">{error}</div>}
+
       <div>
-        <label className="label">Name</label>
-        <input name="name" className="input-field" value={form.name} onChange={handleChange} required />
+        <label className="label">Full Name</label>
+        <input name="name" className="input-field" value={form.name} onChange={handleChange} required placeholder="Your name" />
       </div>
+
       <div>
         <label className="label">Mobile Number</label>
-        <div className="flex gap-2">
+        <div className="flex gap-2 mt-1">
           <input
             name="mobile"
-            className="input-field flex-1"
+            className="input-field flex-1 mt-0"
             value={form.mobile}
             onChange={handleChange}
             required
             inputMode="tel"
             pattern="[0-9]{10}"
-            placeholder="10-digit mobile"
+            placeholder="10-digit number"
           />
-          <button type="button" className="px-5 rounded-md bg-slate-800 text-white font-bold text-sm hover:bg-slate-700 transition" onClick={sendOtp}>
-            {otpSent ? 'RESEND' : 'GET OTP'}
+          <button
+            type="button"
+            onClick={sendOtp}
+            className="px-4 py-3 rounded-xl bg-primary text-white font-extrabold text-sm hover:bg-primary/90 active:scale-[.98] transition-all whitespace-nowrap"
+          >
+            {otpSent ? 'Resend' : 'Get OTP'}
           </button>
         </div>
       </div>
+
       {otpSent && (
-        <div>
+        <div className="animate-slide-up">
           <label className="label">OTP Verification</label>
           <input
             name="otp"
@@ -103,44 +102,51 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
             value={form.otp}
             onChange={handleChange}
             required
-            placeholder="Enter 6-digit OTP (e.g. 123456)"
+            placeholder="6-digit OTP"
             inputMode="numeric"
             pattern="[0-9]{6}"
           />
+          <p className="mt-1.5 text-xs text-muted font-semibold">OTP sent to +91 {form.mobile}</p>
         </div>
       )}
+
       <div>
         <label className="label">Area / Landmark</label>
-        <input name="area" className="input-field" value={form.area} onChange={handleChange} required />
+        <input name="area" className="input-field" value={form.area} onChange={handleChange} required placeholder="Nearest landmark" />
       </div>
+
       <div>
         <label className="label">Issue Type</label>
         <select name="issue_type" className="input-field" value={form.issue_type} onChange={handleChange} required>
-          <option value="">Select issue</option>
-          {issueTypes.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
+          <option value="">Select issue type</option>
+          {issueTypes.map((item) => <option key={item} value={item}>{item}</option>)}
         </select>
       </div>
+
       <div>
         <label className="label">Description</label>
         <textarea
           name="description"
-          className="input-field"
+          className="input-field resize-none"
           rows={3}
           value={form.description}
           onChange={handleChange}
-          placeholder="Describe the problem"
+          placeholder="Describe the problem in detail"
           required
         />
       </div>
+
       <div>
-        <label className="label">Image Upload (optional)</label>
-        <input name="image" type="file" accept="image/*" className="mt-2" onChange={handleChange} />
+        <label className="label">Photo (Optional)</label>
+        <div className="mt-1 border-2 border-dashed border-slate-200 rounded-xl p-4 text-center text-sm text-muted font-semibold hover:border-primary/40 transition-colors cursor-pointer">
+          <input type="file" name="image" accept="image/*" onChange={handleChange} className="w-full opacity-0 absolute pointer-events-none" id="imgUpload" />
+          <label htmlFor="imgUpload" className="cursor-pointer">
+            {form.image ? `📷 ${form.image.name}` : '📷 Tap to attach a photo'}
+          </label>
+        </div>
       </div>
-      <button type="submit" className="button-primary" disabled={sending || !otpSent}>
+
+      <button type="submit" className="btn-primary" disabled={sending || !otpSent}>
         {sending ? 'Submitting...' : 'Submit Complaint'}
       </button>
     </form>

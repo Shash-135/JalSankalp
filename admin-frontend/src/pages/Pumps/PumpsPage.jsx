@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import DataTable from '../../components/tables/DataTable';
 import { useAppContext } from '../../context/AppContext';
 import AddPumpModal from '../../components/forms/AddPumpModal';
@@ -7,22 +7,31 @@ import EditPumpModal from '../../components/forms/EditPumpModal';
 import ViewQRCodeModal from '../../components/forms/ViewQRCodeModal';
 
 const PumpsPage = () => {
-  const { pumps, refreshData } = useAppContext();
+  const { pumps, refreshData, searchQuery } = useAppContext();
   const [showPumpModal, setShowPumpModal] = useState(false);
   const [showAreaModal, setShowAreaModal] = useState(false);
   const [editingPump, setEditingPump] = useState(null);
   const [viewingQRFor, setViewingQRFor] = useState(null);
 
+  const strSearch = (searchQuery || '').toLowerCase();
+  const searchFilteredPumps = useMemo(() => pumps.filter(p => 
+    !strSearch || 
+    p.name?.toLowerCase().includes(strSearch) || 
+    p.location?.toLowerCase().includes(strSearch) || 
+    p.id?.toString().includes(strSearch) ||
+    p.status?.toLowerCase().includes(strSearch)
+  ), [pumps, strSearch]);
+
   return (
     <div className="grid gap-6">
-      <div className="card-surface p-6 flex items-center justify-between">
+      <div className="card-surface p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="text-sm text-slate-500">Asset performance</div>
           <h2 className="text-xl font-semibold text-slate-800">Pump & Area Management</h2>
         </div>
-        <div className="flex gap-3">
-          <button onClick={() => setShowAreaModal(true)} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold shadow-sm hover:bg-slate-200">Add Area</button>
-          <button onClick={() => setShowPumpModal(true)} className="px-4 py-2 rounded-xl bg-secondary text-white font-semibold shadow hover:bg-secondary/90">Add Pump</button>
+        <div className="flex flex-wrap gap-2 sm:gap-3 w-full md:w-auto mt-2 md:mt-0">
+          <button onClick={() => setShowAreaModal(true)} className="flex-1 md:flex-none px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold shadow-sm hover:bg-slate-200">Add Area</button>
+          <button onClick={() => setShowPumpModal(true)} className="flex-1 md:flex-none px-4 py-2 rounded-xl bg-secondary text-white font-semibold shadow hover:bg-secondary/90">Add Pump</button>
         </div>
       </div>
 
@@ -36,7 +45,7 @@ const PumpsPage = () => {
           { key: 'status', label: 'Status' },
           { key: 'uptime', label: 'Uptime' },
         ]}
-        data={pumps}
+        data={searchFilteredPumps}
         renderActions={(row) => (
           <div className="flex justify-end gap-2">
             <button 

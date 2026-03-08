@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { HiMenu } from 'react-icons/hi';
 import SearchInput from '../forms/SearchInput';
 import { useAppContext } from '../../context/AppContext';
 
@@ -12,10 +13,10 @@ const pageTitles = {
   '/profile': 'Profile Settings',
 };
 
-const Navbar = () => {
+const Navbar = ({ onMenuClick }) => {
   const location = useLocation();
   const title = pageTitles[location.pathname] || 'JALSANKALP';
-  const { adminUser } = useAppContext();
+  const { adminUser, searchQuery, setSearchQuery } = useAppContext();
 
   const userName = adminUser?.name || 'Admin User';
   const userRole = adminUser?.role || 'Control Room Admin';
@@ -28,15 +29,25 @@ const Navbar = () => {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-slate-200">
-      <div className="px-6 lg:px-8 py-4 flex items-center gap-4">
-        <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-[0.2em] text-primary">Live Dashboard</span>
-          <h1 className="text-xl font-semibold text-slate-800">{title}</h1>
+    <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-slate-200 w-full">
+      <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-4">
+        <button 
+          onClick={onMenuClick}
+          className="lg:hidden p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-lg flex-shrink-0"
+        >
+          <HiMenu className="w-6 h-6" />
+        </button>
+        <div className="flex flex-col flex-1 sm:flex-none truncate">
+          <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-primary truncate">Live Dashboard</span>
+          <h1 className="text-lg sm:text-xl font-semibold text-slate-800 truncate">{title}</h1>
         </div>
-        <div className="flex-1" />
+        <div className="hidden sm:block flex-1" />
         <div className="hidden md:block w-72">
-          <SearchInput placeholder="Search pumps, operators, complaints" />
+          <SearchInput 
+            placeholder="Search pumps, operators, complaints" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">

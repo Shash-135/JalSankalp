@@ -1,17 +1,28 @@
 const pool = require('../database/db');
 
-const getPumpByQR = async (req, res) => {
+const getPumpByQR = async (req, res, next) => {
     try {
-        const [rows] = await pool.query('SELECT p.*, a.name as location FROM Pump p LEFT JOIN Area a ON p.area_id = a.id WHERE p.qr_code = ?', [req.params.qr_code]);
+        const query = `
+            SELECT 
+                p.*, 
+                a.name as location,
+                o.name as operator_name,
+                (SELECT timestamp FROM PumpLog WHERE pump_id = p.id ORDER BY timestamp DESC LIMIT 1) as last_operation_time
+            FROM Pump p 
+            LEFT JOIN Area a ON p.area_id = a.id 
+            LEFT JOIN Operator o ON p.area_id = o.assigned_area_id
+            WHERE p.qr_code = ?
+            LIMIT 1
+        `;
+        const [rows] = await pool.query(query, [req.params.qr_code]);
         if (rows.length === 0) return res.status(404).json({ message: 'Pump not found for this QR' });
         res.json(rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const startPump = async (req, res) => {
+const startPump = async (req, res, next) => {
     try {
         const { pump_id, notes } = req.body;
         const operator_id = req.user.id;
@@ -23,12 +34,11 @@ const startPump = async (req, res) => {
         );
         res.status(201).json({ message: 'Pump started successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const stopPump = async (req, res) => {
+const stopPump = async (req, res, next) => {
     try {
         const { pump_id, notes } = req.body;
         const operator_id = req.user.id;
@@ -54,12 +64,11 @@ const stopPump = async (req, res) => {
 
         res.status(201).json({ message: 'Pump stopped successfully', duration });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const syncLogs = async (req, res) => {
+const syncLogs = async (req, res, next) => {
     // Basic array sync: [{pump_id, action, timestamp, duration, notes}]
     try {
         const { logs } = req.body;
@@ -69,17 +78,16 @@ const syncLogs = async (req, res) => {
         for (const log of logs) {
             await pool.query(
                 'INSERT INTO PumpLog (pump_id, operator_id, action, timestamp, duration, notes) VALUES (?, ?, ?, ?, ?, ?)',
-                [log.pump_id, operator_id, log.action, log.timestamp || new Date(), log.duration || 0, log.notes]
+                [log.pump_id, operator_id, log.action, log.timestamp ? new Date(log.timestamp) : new Date(), log.duration || 0, log.notes]
             );
         }
         res.json({ message: 'Logs synced successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const getPumpLogs = async (req, res) => {
+const getPumpLogs = async (req, res, next) => {
     try {
         const operator_id = req.user.id;
         const [rows] = await pool.query(`
@@ -91,12 +99,11 @@ const getPumpLogs = async (req, res) => {
         `, [operator_id]);
         res.json(rows);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 
-const reportMaintenance = async (req, res) => {
+const reportMaintenance = async (req, res, next) => {
     try {
         const { pump_id, comment } = req.body;
         const operator_id = req.user.id;
@@ -113,8 +120,7 @@ const reportMaintenance = async (req, res) => {
 
         res.status(201).json({ message: 'Maintenance report submitted successfully', photo_url });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        next(err);
     }
 };
 

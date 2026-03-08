@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardCard from '../../components/dashboard/DashboardCard';
 import ChartCard from '../../components/dashboard/ChartCard';
@@ -6,12 +6,33 @@ import DataTable from '../../components/tables/DataTable';
 import useDashboard from '../../hooks/useDashboard';
 
 const DashboardPage = () => {
-  const { cards, pumps, operators, complaints, usageChart, complaintDistribution } = useDashboard();
+  const { cards, pumps, operators, complaints, usageChart, complaintDistribution, searchQuery } = useDashboard();
   const navigate = useNavigate();
+
+  const strSearch = (searchQuery || '').toLowerCase();
+  
+  const filteredPumps = useMemo(() => pumps.filter(p => 
+    !strSearch || p.name?.toLowerCase().includes(strSearch) || p.location?.toLowerCase().includes(strSearch) || p.id?.toString().includes(strSearch)
+  ), [pumps, strSearch]);
+
+  const filteredOperators = useMemo(() => operators.filter(o => 
+    !strSearch || o.name?.toLowerCase().includes(strSearch) || o.region?.toLowerCase().includes(strSearch)
+  ), [operators, strSearch]);
+
+  const filteredComplaints = useMemo(() => complaints.filter(c => 
+    !strSearch || c.id?.toString().includes(strSearch) || c.villager_name?.toLowerCase().includes(strSearch) || c.pump_name?.toLowerCase().includes(strSearch) || c.issue_type?.toLowerCase().includes(strSearch) || c.status?.toLowerCase().includes(strSearch)
+  ).slice(0, 5), [complaints, strSearch]); // Dashboard shows limited list
 
   return (
     <div className="grid gap-6">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">System Overview</h2>
+          <p className="text-sm text-slate-500 mt-1">Live metrics from Gram Panchayat water pumps</p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {cards.map((card) => (
           <DashboardCard key={card.title} {...card} />
         ))}
@@ -60,7 +81,7 @@ const DashboardPage = () => {
               { key: 'status', label: 'Status' },
               { key: 'uptime', label: 'Uptime' },
             ]}
-            data={pumps}
+            data={filteredPumps.slice(0, 5)}
           />
         </div>
         <DataTable
@@ -73,7 +94,7 @@ const DashboardPage = () => {
             { key: 'shift', label: 'Shift' },
             { key: 'status', label: 'Status' },
           ]}
-          data={operators}
+          data={filteredOperators.slice(0, 5)}
         />
       </div>
 
@@ -88,7 +109,12 @@ const DashboardPage = () => {
           { key: 'status', label: 'Status' },
           { key: 'logged', label: 'Logged' },
         ]}
-        data={complaints}
+        data={filteredComplaints.map(c => ({
+          ...c,
+          subject: c.issue_type,
+          village: c.pump_name,
+          logged: new Date(c.created_at).toLocaleDateString()
+        }))}
       />
     </div>
   );
