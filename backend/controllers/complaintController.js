@@ -43,6 +43,17 @@ const createComplaint = async (req, res, next) => {
             return res.status(400).json({ message: 'Villager identification required (mobile number)' });
         }
 
+        // Validate pump_id
+        if (!pump_id) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'Pump ID is required.' });
+        }
+        const [pRows] = await connection.query('SELECT id FROM Pump WHERE id = ?', [pump_id]);
+        if (pRows.length === 0) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'Invalid Pump ID. Please check and try again.' });
+        }
+
         const photoUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
         const [result] = await connection.query(

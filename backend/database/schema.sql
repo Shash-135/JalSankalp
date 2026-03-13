@@ -80,6 +80,8 @@ CREATE TABLE IF NOT EXISTS Complaint (
     description TEXT,
     photo_url VARCHAR(255),
     status ENUM('pending', 'resolved') DEFAULT 'pending',
+    admin_notes TEXT,
+    resolution_photo_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     resolved_at TIMESTAMP NULL,
     FOREIGN KEY (villager_id) REFERENCES Villager(id) ON DELETE CASCADE,

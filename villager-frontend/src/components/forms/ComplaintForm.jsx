@@ -110,6 +110,22 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
         </div>
       )}
 
+      {!pumpId && (
+        <div className="animate-slide-up">
+          <label className="label">Pump ID</label>
+          <input
+            name="pump_id"
+            className="input-field"
+            value={form.pump_id}
+            onChange={handleChange}
+            required
+            placeholder="Enter Pump ID Number"
+            inputMode="numeric"
+            pattern="[0-9]+"
+          />
+        </div>
+      )}
+
       <div>
         <label className="label">Area / Landmark</label>
         <input name="area" className="input-field" value={form.area} onChange={handleChange} required placeholder="Nearest landmark" />
