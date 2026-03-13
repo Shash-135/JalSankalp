@@ -16,6 +16,7 @@ export type Pump = {
   lastServiced?: string;
   operatorName?: string;
   lastOperationTime?: string;
+  qrCode?: string;
 };
 
 type ActionPayload = {
@@ -101,6 +102,7 @@ export const fetchPump = async (qrCodeValue: string): Promise<Pump> => {
   const p = res.data;
   return {
     id:                String(p.id),
+    qrCode:            p.qr_code || qrCodeValue,
     name:              p.name,
     location:          p.location,
     status:            p.status,

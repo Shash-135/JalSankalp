@@ -13,7 +13,7 @@ import api from '../services/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
-type DashboardPump = { id: string; name: string; location: string; status: string };
+type DashboardPump = { id: string; name: string; location: string; status: string; qrCode?: string };
 
 type ActionTile = { label: string; icon: string; screen: keyof RootStackParamList; color: string };
 
@@ -35,7 +35,8 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
         if (!operator?.id) return;
         const res = await api.get(`/operator/${operator.id}/pumps`);
         const formatted = res.data.map((p: any) => ({
-          id:       p.qr_code || p.id.toString(),
+          id:       String(p.id),             // numeric pump id for API calls
+          qrCode:   p.qr_code || undefined,   // keep QR for display
           name:     p.name,
           location: p.location || 'Assigned Region',
           status:   p.status === 'active' ? 'Active' : 'Idle',

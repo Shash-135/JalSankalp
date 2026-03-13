@@ -32,7 +32,7 @@ const PumpDetailsScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
             />
           ) : null}
         </View>
-        <Text style={styles.idText}>QR / ID: {pump.id}</Text>
+        <Text style={styles.idText}>QR / ID: {pump.qrCode || pump.id}</Text>
       </View>
 
       {/* Details card */}

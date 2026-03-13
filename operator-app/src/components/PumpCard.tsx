@@ -9,6 +9,7 @@ type Props = {
     name: string;
     location?: string;
     status?: string;
+    qrCode?: string;
   };
   onPress?: () => void;
 };
@@ -38,7 +39,7 @@ const PumpCard: React.FC<Props> = ({ pump, onPress }) => {
         {pump.location ? (
           <Text style={styles.meta}>📍 {pump.location}</Text>
         ) : null}
-        <Text style={styles.id}>ID: {pump.id}</Text>
+        <Text style={styles.id}>ID: {pump.qrCode || pump.id}</Text>
       </View>
 
       {/* Chevron */}

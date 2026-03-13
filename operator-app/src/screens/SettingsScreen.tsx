@@ -22,12 +22,12 @@ const SettingsScreen: React.FC = () => {
 
   const handleSync = async () => {
     setSyncing(true);
-    const res = await syncOfflineLogs();
+    const res: any = await syncOfflineLogs();
     setSyncing(false);
     if (res.synced) {
       Alert.alert('Synced ✓', res.message || 'Offline logs uploaded successfully.');
     } else {
-      Alert.alert('Not synced', res.reason === 'offline' ? 'No internet connection.' : 'Server issue. Try again later.');
+      Alert.alert('Not synced', res.reason === 'offline' ? 'No internet connection.' : `Error: ${res.reason}\n${res.errorDetail || ''}`);
     }
   };
 

@@ -53,7 +53,7 @@ const useDashboard = () => {
     logged: c.created_at ? new Date(c.created_at).toLocaleDateString('en-IN') : '—',
   }));
 
-  return { cards, pumps, operators, complaints: dashboardComplaints, usageChart, complaintDistribution };
+  return { cards, pumps, operators, complaints: dashboardComplaints, usageChart, complaintDistribution, searchQuery };
 };
 
 export default useDashboard;

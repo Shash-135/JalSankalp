@@ -24,8 +24,9 @@ export const syncOfflineLogs = async () => {
     await syncPumpLogs(logs as any);
     await AsyncStorage.removeItem(STORAGE_KEYS.offlineLogs);
     return { synced: true, message: `${logs.length} log(s) synced successfully.` };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Sync failed:', error);
-    return { synced: false, reason: 'server', error };
+    const detail = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+    return { synced: false, reason: 'server', errorDetail: detail };
   }
 };
