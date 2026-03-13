@@ -1,6 +1,6 @@
 // Prefer runtime-configured API URL; fall back to previous LAN default to avoid breaking dev builds.
 const runtimeBase = (typeof process !== 'undefined' && process.env && (process.env.API_BASE_URL || process.env.EXPO_PUBLIC_API_URL)) || '';
-export const API_BASE_URL = runtimeBase.trim() || 'http://192.168.0.135:5000/api';
+export const API_BASE_URL = runtimeBase.trim() || 'http://10.67.188.206:5000/api';
 
 // Toggle to run the app without a backend. Set to false when testing against real APIs.
 export const OFFLINE_MODE = false;
