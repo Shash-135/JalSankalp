@@ -7,7 +7,7 @@ const QRScanner = ({ onScan }) => {
   useEffect(() => {
     if (!scanning) return;
 
-    // Initialize scanner
+    
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
@@ -16,15 +16,15 @@ const QRScanner = ({ onScan }) => {
 
     scanner.render(
       (decodedText) => {
-        // Stop scanning on success
+        
         scanner.clear();
         setScanning(false);
-        // We assume the QR contains just a pump ID like "1" or JSON. 
-        // We'll pass it up. The parent should fetch the real pump details.
+        
+        
         onScan?.({ qr_code: decodedText });
       },
       (error) => {
-        // Ignore constant frame scanning errors. They happen every frame until a code is found.
+        
       }
     );
 
@@ -35,7 +35,7 @@ const QRScanner = ({ onScan }) => {
 
   return (
     <div className="bg-slate-900 rounded-lg p-6 grid gap-4 text-center border-4 border-slate-800 shadow-inner relative overflow-hidden">
-      {/* Decorative view-finder corners */}
+      {}
       <div className="absolute top-2 left-2 w-8 h-8 border-t-4 border-l-4 border-secondary opacity-80"></div>
       <div className="absolute top-2 right-2 w-8 h-8 border-t-4 border-r-4 border-secondary opacity-80"></div>
       <div className="absolute bottom-2 left-2 w-8 h-8 border-b-4 border-l-4 border-secondary opacity-80"></div>

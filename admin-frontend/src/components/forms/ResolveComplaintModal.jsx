@@ -52,7 +52,7 @@ const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
           </div>
         )}
 
-        {/* Villager Submitted Details */}
+        {}
         {complaint && (
           <div className="mb-5 p-4 bg-slate-50 rounded-xl border border-slate-200 grid gap-3">
             <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Villager Submission</div>

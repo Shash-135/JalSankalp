@@ -12,7 +12,7 @@ import AwarenessPage from './pages/Awareness/AwarenessPage.jsx';
 const AppShell = () => (
   <div className="min-h-screen bg-bg flex flex-col">
     <Header />
-    {/* Responsive content container: centered, max-width, full-bleed on small screens */}
+    {}
     <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24 md:pb-8 animate-fade-in">
       <Outlet />
     </main>

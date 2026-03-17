@@ -12,16 +12,16 @@ const LogsPage = () => {
 
   const fetchLogs = async () => {
     try {
-      // Create a mock date formatter helper
+      
       const formatTime = (isoString) => {
         const d = new Date(isoString);
         return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' ' + d.toLocaleDateString();
       };
 
-      // We'll hit a new endpoint if it exists, otherwise we'll gracefully fallback or map the data
-      // For now, let's mock it using pumps/operators if no direct logs endpoint is ready in backend
-      // But keeping with the prompt requirement: we EXPECT an endpoint or we simulate it visually for the DB structure
-      // Call the newly created backend endpoint
+      
+      
+      
+      
       const res = await api.get('/admin/logs');
 
       const formattedLogs = res.data.map(log => ({

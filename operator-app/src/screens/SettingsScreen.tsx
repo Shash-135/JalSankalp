@@ -43,7 +43,7 @@ const SettingsScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Operator info card */}
+      {}
       {operator && (
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
@@ -56,7 +56,7 @@ const SettingsScreen: React.FC = () => {
         </View>
       )}
 
-      {/* Settings rows */}
+      {}
       <View style={styles.card}>
         <SettingsRow label="Connection">
           <StatusBadge
@@ -70,7 +70,7 @@ const SettingsScreen: React.FC = () => {
         </SettingsRow>
       </View>
 
-      {/* Actions */}
+      {}
       <View style={styles.actions}>
         <CustomButton title="Sync Offline Logs" onPress={handleSync} loading={syncing} type="primary" />
         <CustomButton title="Clear Offline Data" onPress={clearQueue} type="ghost" />

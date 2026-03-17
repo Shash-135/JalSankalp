@@ -35,7 +35,7 @@ const AwarenessPage = () => (
       </p>
     </div>
 
-    {/* 3-column on large screens, 1 column on mobile */}
+    {}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
       <AwarenessCard title="Water Saving Tips"  points={tips}     icon={HiLightBulb} accent="border-l-success" />
       <AwarenessCard title="Emergency Contacts" points={contacts} icon={HiPhone}     accent="border-l-secondary" />

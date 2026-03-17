@@ -45,7 +45,7 @@ const getComplaintReport = async (req, res) => {
             GROUP BY issue_type
         `);
         
-        // Let's format it nicely
+        
         const total = rows.reduce((acc, row) => acc + row.count_by_type, 0);
         const pending = rows.reduce((acc, row) => acc + parseInt(row.pending_complaints || 0), 0);
         const resolved = rows.reduce((acc, row) => acc + parseInt(row.resolved_complaints || 0), 0);

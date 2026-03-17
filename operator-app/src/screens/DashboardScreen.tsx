@@ -35,8 +35,8 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
         if (!operator?.id) return;
         const res = await api.get(`/operator/${operator.id}/pumps`);
         const formatted = res.data.map((p: any) => ({
-          id:       String(p.id),             // numeric pump id for API calls
-          qrCode:   p.qr_code || undefined,   // keep QR for display
+          id:       String(p.id),             
+          qrCode:   p.qr_code || undefined,   
           name:     p.name,
           location: p.location || 'Assigned Region',
           status:   p.status === 'active' ? 'Active' : 'Idle',
@@ -56,7 +56,7 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Gradient greeting header (simulated with solid + shadow) */}
+        {}
         <View style={styles.headerCard}>
           <View style={styles.headerLeft}>
             <Text style={styles.greeting}>Hello, {operator?.name?.split(' ')[0] || 'Operator'} 👋</Text>

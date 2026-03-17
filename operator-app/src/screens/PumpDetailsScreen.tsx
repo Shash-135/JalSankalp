@@ -21,7 +21,7 @@ const PumpDetailsScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
 
   return (
     <View style={styles.container}>
-      {/* Header band */}
+      {}
       <View style={styles.headerBand}>
         <View style={styles.headerContent}>
           <Text style={styles.name}>{pump.name}</Text>
@@ -35,7 +35,7 @@ const PumpDetailsScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
         <Text style={styles.idText}>QR / ID: {pump.qrCode || pump.id}</Text>
       </View>
 
-      {/* Details card */}
+      {}
       <View style={styles.detailCard}>
         {pump.location        ? <MetaRow label="📍 Location"       value={pump.location} /> : null}
         {pump.operatorName    ? <MetaRow label="👤 Operator"        value={pump.operatorName} /> : null}

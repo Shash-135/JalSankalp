@@ -1,8 +1,8 @@
 const pool = require('../database/db');
 
-// @desc    Submit feedback
-// @route   POST /api/feedback
-// @access  Public (Villagers)
+
+
+
 const submitFeedback = async (req, res) => {
   const { mobile, rating, comments } = req.body;
 
@@ -11,7 +11,7 @@ const submitFeedback = async (req, res) => {
   }
 
   try {
-    // Check if villager exists, if not, create
+    
     let [villagers] = await pool.query('SELECT id FROM Villager WHERE mobile = ?', [mobile]);
     let villager_id;
 
@@ -34,9 +34,9 @@ const submitFeedback = async (req, res) => {
   }
 };
 
-// @desc    Get all feedback
-// @route   GET /api/feedback
-// @access  Private (Admin)
+
+
+
 const getFeedback = async (req, res) => {
   try {
     const [rows] = await pool.query(`

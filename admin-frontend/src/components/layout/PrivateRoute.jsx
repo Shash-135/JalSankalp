@@ -6,7 +6,7 @@ const PrivateRoute = () => {
   const location = useLocation();
 
   if (!token) {
-    // Redirect to login if unauthenticated, preserving the intended destination
+    
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

@@ -10,7 +10,7 @@ const ComplaintPage = () => {
 
   return (
     <div className="grid gap-5">
-      {/* Page Header */}
+      {}
       <div className="page-header animate-slide-up grid gap-1.5">
         <div className="flex items-center gap-2 text-white/70 text-xs font-extrabold uppercase tracking-widest">
           <HiClipboardList className="h-4 w-4" />
@@ -28,7 +28,7 @@ const ComplaintPage = () => {
         )}
       </div>
 
-      {/* Responsive: form + success side by side on large screens */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <ComplaintForm pumpId={pumpContext.pump_id} pumpName={pumpContext.pump_name} onSubmitted={setSubmitted} />
 

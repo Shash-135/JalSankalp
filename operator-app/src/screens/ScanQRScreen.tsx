@@ -59,7 +59,7 @@ const ScanQRScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'ScanQR'
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Camera viewfinder */}
+      {}
       <View style={styles.cameraCard}>
         {device ? (
           <View style={styles.cameraBox}>
@@ -69,7 +69,7 @@ const ScanQRScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'ScanQR'
               isActive
               codeScanner={codeScanner}
             />
-            {/* Corner brackets overlay */}
+            {}
             <View style={[styles.corner, styles.topLeft]} />
             <View style={[styles.corner, styles.topRight]} />
             <View style={[styles.corner, styles.bottomLeft]} />
@@ -83,7 +83,7 @@ const ScanQRScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'ScanQR'
         )}
       </View>
 
-      {/* Manual input card */}
+      {}
       <View style={styles.manualCard}>
         <Text style={styles.orLabel}>— or enter manually —</Text>
         <TextInput
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     overflow: 'hidden',
   },
-  // Corner brackets
+  
   corner: {
     position: 'absolute',
     width: CORNER_SIZE,
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   topRight:    { top: 16, right: 16, borderTopWidth: CORNER_WIDTH, borderRightWidth: CORNER_WIDTH,  borderTopRightRadius: 4 },
   bottomLeft:  { bottom: 40, left: 16,  borderBottomWidth: CORNER_WIDTH, borderLeftWidth: CORNER_WIDTH,  borderBottomLeftRadius: 4 },
   bottomRight: { bottom: 40, right: 16, borderBottomWidth: CORNER_WIDTH, borderRightWidth: CORNER_WIDTH, borderBottomRightRadius: 4 },
-  // Manual section
+  
   manualCard: {
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.xl,

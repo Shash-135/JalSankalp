@@ -14,15 +14,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Add a response interceptor to handle 401s globally
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // If the server tells us the token is invalid/expired
+    
     if (error.response && error.response.status === 401) {
-      // 1. Wipe out the invalid token
+      
       localStorage.removeItem('admin_token');
-      // 2. Force the browser to gracefully redirect (avoids React Router cyclic dependancy here)
+      
       if (window.location.pathname !== '/login') {
          window.location.href = '/login';
       }

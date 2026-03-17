@@ -27,7 +27,7 @@ const startPump = async (req, res, next) => {
         const { pump_id, notes } = req.body;
         const operator_id = req.user.id;
         
-        // Log action start
+        
         await pool.query(
             'INSERT INTO PumpLog (pump_id, operator_id, action, notes) VALUES (?, ?, "start", ?)', 
             [pump_id, operator_id, notes]
@@ -43,7 +43,7 @@ const stopPump = async (req, res, next) => {
         const { pump_id, notes } = req.body;
         const operator_id = req.user.id;
         
-        // Find last start action
+        
         const [lastLog] = await pool.query(
             'SELECT * FROM PumpLog WHERE pump_id = ? AND action = "start" ORDER BY timestamp DESC LIMIT 1',
             [pump_id]
@@ -53,10 +53,10 @@ const stopPump = async (req, res, next) => {
         if (lastLog.length > 0) {
             const startTime = new Date(lastLog[0].timestamp).getTime();
             const stopTime = new Date().getTime();
-            duration = Math.floor((stopTime - startTime) / 60000); // minutes
+            duration = Math.floor((stopTime - startTime) / 60000); 
         }
 
-        // Log action stop
+        
         await pool.query(
             'INSERT INTO PumpLog (pump_id, operator_id, action, duration, notes) VALUES (?, ?, "stop", ?, ?)', 
             [pump_id, operator_id, duration, notes]
@@ -69,7 +69,7 @@ const stopPump = async (req, res, next) => {
 };
 
 const syncLogs = async (req, res, next) => {
-    // Basic array sync: [{pump_id, action, timestamp, duration, notes}]
+    
     try {
         const { logs } = req.body;
         const operator_id = req.user.id;

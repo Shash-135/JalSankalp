@@ -5,7 +5,7 @@ import ResolveComplaintModal from '../../components/forms/ResolveComplaintModal'
 
 import api from '../../services/api';
 
-// Derive backend base from the configured Axios baseURL (removes trailing /api)
+
 const BASE = api.defaults.baseURL.replace(/\/api$/, '');
 
 const ComplaintsPage = () => {
@@ -21,7 +21,7 @@ const ComplaintsPage = () => {
     const matchesType = filterType === 'all' || c.status === filterType;
     if (!matchesType) return false;
 
-    // Search text match
+    
     if (!strSearch) return true;
     return c.id?.toString().includes(strSearch) || 
            c.villager_name?.toLowerCase().includes(strSearch) || 
@@ -92,7 +92,7 @@ const ComplaintsPage = () => {
         data={enrichedComplaints}
       />
 
-      {/* Full-size photo preview */}
+      {}
       {previewImg && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setPreviewImg(null)}>
           <img src={previewImg} alt="Full size" className="max-w-full max-h-full rounded-xl shadow-2xl" />

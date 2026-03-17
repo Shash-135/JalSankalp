@@ -14,7 +14,7 @@ export const syncOfflineLogs = async () => {
     return { synced: false, reason: 'offline' };
   }
 
-  // Use the single unified queue (same as pumpService.ts)
+  
   const logs = await getOfflineQueue();
   if (!logs.length) {
     return { synced: true, message: 'No pending logs' };

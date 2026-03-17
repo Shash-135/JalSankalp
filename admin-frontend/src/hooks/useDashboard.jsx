@@ -44,7 +44,7 @@ const useDashboard = () => {
     },
   ];
 
-  // Map raw rows to the shape the dashboard summary table expects
+  
   const dashboardComplaints = complaints.slice(0, 10).map(c => ({
     id: c.id,
     subject: c.issue_type || '—',

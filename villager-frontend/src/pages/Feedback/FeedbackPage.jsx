@@ -14,7 +14,7 @@ const FeedbackPage = () => (
         Help us improve the water supply service for everyone.
       </p>
     </div>
-    {/* Constrain form to a readable width on desktop */}
+    {}
     <div className="max-w-xl">
       <FeedbackForm />
     </div>

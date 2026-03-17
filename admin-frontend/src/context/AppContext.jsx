@@ -78,10 +78,10 @@ export const AppProvider = ({ children }) => {
 
       setData({
         stats: { totalPumps: pumps.length, activePumps, inactivePumps, pendingComplaints, resolvedComplaints },
-        // Keep full raw objects so all pages get every field they need
+        
         pumps: pumps.map(p => ({ ...p, uptime: 'N/A' })),
         operators: operators.map(o => ({ ...o, shift: 'Standard' })),
-        complaints: complaints, // raw rows — photo_url, villager_name, pump_name etc. all preserved
+        complaints: complaints, 
         areas,
         usageChart,
         complaintDistribution,

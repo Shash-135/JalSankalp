@@ -23,7 +23,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Mobile Drawer Overlay */}
+      {}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden"
@@ -43,7 +43,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {isCollapsed && (
           <div className="text-2xl font-bold text-white">JS</div>
         )}
-        {/* Desktop Collapse Toggle */}
+        {}
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={`hidden lg:flex absolute top-6 -right-3 bg-white text-primary border border-slate-200 h-6 w-6 rounded-full items-center justify-center shadow hover:bg-slate-50 transition-colors z-50`}

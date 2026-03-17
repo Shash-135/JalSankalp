@@ -26,7 +26,7 @@ const parseJwtExp = (token: string): number | undefined => {
 
 export const loginRequest = async (payload: LoginPayload): Promise<LoginResponse> => {
   if (OFFLINE_MODE) {
-    // In strict offline mode, simulate success if we have cached creds, but for now we reject
+    
     throw new Error("Offline login without cached credentials is not supported yet.");
   }
 

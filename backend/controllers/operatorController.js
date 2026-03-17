@@ -18,7 +18,7 @@ const createOperator = async (req, res, next) => {
     try {
         const { name, mobile, password, assigned_area_id } = req.body;
         
-        // Check if exists
+        
         const [exists] = await pool.query('SELECT id FROM Operator WHERE mobile = ?', [mobile]);
         if (exists.length > 0) return res.status(400).json({ message: 'Operator with this mobile already exists' });
 
@@ -64,7 +64,7 @@ const getOperatorPumps = async (req, res, next) => {
         if (operatorRows.length === 0) return res.status(404).json({ message: 'Operator not found' });
         
         const areaId = operatorRows[0].assigned_area_id;
-        if (!areaId) return res.json([]); // No area assigned
+        if (!areaId) return res.json([]); 
         
         const [pumps] = await pool.query('SELECT id, name, status, qr_code FROM Pump WHERE area_id = ?', [areaId]);
         res.json(pumps);

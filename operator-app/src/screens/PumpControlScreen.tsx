@@ -18,7 +18,7 @@ const PumpControlScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
   const pulseAnim                 = useRef(new Animated.Value(1)).current;
   const timerRef                  = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Pulse animation for running indicator
+  
   useEffect(() => {
     if (startTime) {
       Animated.loop(
@@ -78,7 +78,7 @@ const PumpControlScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Status visual */}
+      {}
       <View style={styles.statusCard}>
         <View style={styles.indicatorWrap}>
           <Animated.View style={[styles.pulseDot, {
@@ -104,7 +104,7 @@ const PumpControlScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
         )}
       </View>
 
-      {/* Controls */}
+      {}
       <View style={styles.controls}>
         <CustomButton
           title={loading && !isRunning ? 'Starting...' : '▶  Start Pump'}

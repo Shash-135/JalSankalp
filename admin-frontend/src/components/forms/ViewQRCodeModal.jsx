@@ -7,12 +7,12 @@ const ViewQRCodeModal = ({ pump: pumpProp, onClose }) => {
   const qrRef = useRef();
   const [pump, setPump] = useState(pumpProp);
 
-  // Fetch full pump data to ensure qr_code field is always present
+  
   useEffect(() => {
     if (pumpProp?.id) {
       api.get(`/pumps/${pumpProp.id}`)
         .then(res => setPump(res.data))
-        .catch(() => setPump(pumpProp)); // fallback to what was passed
+        .catch(() => setPump(pumpProp)); 
     }
   }, [pumpProp?.id]);
 

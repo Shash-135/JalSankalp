@@ -10,7 +10,7 @@ const getAdminProfile = async (req, res, next) => {
             return res.status(404).json({ message: 'Admin not found' });
         }
         
-        // Provide consistent dummy data for role/phone since schema doesn't have it
+        
         res.json({
             ...rows[0],
             role: 'Control Room Admin',
@@ -26,7 +26,7 @@ const updateAdminProfile = async (req, res, next) => {
         const adminId = req.user.id;
         const { name, email, password } = req.body;
         
-        // Check if email is already taken by another admin
+        
         const [existing] = await pool.query('SELECT id FROM Admin WHERE email = ? AND id != ?', [email, adminId]);
         if (existing.length > 0) {
             return res.status(400).json({ message: 'Email already in use' });

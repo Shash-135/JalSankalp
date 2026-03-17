@@ -4,9 +4,9 @@ import NetInfo from '@react-native-community/netinfo';
 import { PumpLog } from '../components/LogCard';
 import { STORAGE_KEYS } from '../constants';
 
-// ─── Single unified offline queue ──────────────────────────────────────────
-// All offline logs are stored under STORAGE_KEYS.offlineLogs so that
-// syncService.ts and pumpService.ts share the same queue and "Sync" button works.
+
+
+
 
 export type Pump = {
   id: string;
@@ -31,7 +31,7 @@ type ActionPayload = {
   name?: string;
 };
 
-// ─── Offline queue helpers (use shared STORAGE_KEYS.offlineLogs) ────────────
+
 
 export const getOfflineQueue = async (): Promise<ActionPayload[]> => {
   try {
@@ -48,7 +48,7 @@ export const saveToOfflineQueue = async (payload: ActionPayload) => {
   await AsyncStorage.setItem(STORAGE_KEYS.offlineLogs, JSON.stringify(queue));
 };
 
-// ─── Called by syncService.ts ───────────────────────────────────────────────
+
 export const syncPumpLogs = async (logs: PumpLog[]) => {
   const rawLogs = logs.filter(l => l.action === 'start' || l.action === 'stop');
   const reports = logs.filter(l => l.action === 'report');
@@ -77,7 +77,7 @@ export const syncPumpLogs = async (logs: PumpLog[]) => {
   }
 };
 
-// ─── pumpService.ts sync (also used by App.tsx NetInfo listener) ────────────
+
 export const syncOfflineLogs = async () => {
   const isOnline = await NetInfo.fetch().then(s => s.isConnected);
   if (!isOnline) return { status: 'offline' };
@@ -95,7 +95,7 @@ export const syncOfflineLogs = async () => {
   }
 };
 
-// ─── Pump API calls ─────────────────────────────────────────────────────────
+
 
 export const fetchPump = async (qrCodeValue: string): Promise<Pump> => {
   const res = await api.get(`/pumps/qr/${encodeURIComponent(qrCodeValue)}`);

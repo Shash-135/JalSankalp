@@ -11,7 +11,7 @@ const PumpInfoCard = ({ name, location, status, lastMaintenance, qrId }) => {
   const st = statusMap[status] || { label: status, cls: 'badge' };
   return (
     <div className="card overflow-hidden animate-slide-up">
-      {/* Header Band */}
+      {}
       <div className="bg-gradient-to-r from-primary to-blue-700 px-5 py-5 grid gap-2">
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-xl font-black text-white leading-tight">{name}</h2>
@@ -23,7 +23,7 @@ const PumpInfoCard = ({ name, location, status, lastMaintenance, qrId }) => {
         </div>
       </div>
 
-      {/* Details */}
+      {}
       <div className="px-5 py-4 grid gap-3">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2 text-muted font-semibold">

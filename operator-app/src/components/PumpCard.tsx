@@ -23,7 +23,7 @@ const PumpCard: React.FC<Props> = ({ pump, onPress }) => {
       onPress={onPress}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
-      {/* Left accent bar */}
+      {}
       <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
 
       <View style={styles.body}>
@@ -42,7 +42,7 @@ const PumpCard: React.FC<Props> = ({ pump, onPress }) => {
         <Text style={styles.id}>ID: {pump.qrCode || pump.id}</Text>
       </View>
 
-      {/* Chevron */}
+      {}
       <Text style={styles.chevron}>›</Text>
     </Pressable>
   );

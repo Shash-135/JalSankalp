@@ -33,7 +33,7 @@ const getPumpByQR = async (req, res, next) => {
         console.log(`\n[QR SCAN] Raw param: "${qr}"`);
         console.log(`[QR SCAN] Decoded+Trimmed: "${decodedQR}"`);
 
-        // Also print all QR codes in DB to compare
+        
         const [all] = await pool.query('SELECT id, qr_code FROM Pump');
         console.log('[QR SCAN] All QR codes in DB:', all.map(p => `"${p.qr_code}"`).join(', '));
 
@@ -69,7 +69,7 @@ const createPump = async (req, res, next) => {
         const { area_id, name, installation_date } = req.body;
         const qrContent = `QR_PUMP_${uuidv4()}`;
 
-        // Just checking if Area exists
+        
         const [areas] = await pool.query('SELECT id FROM Area WHERE id = ?', [area_id]);
         if (areas.length === 0) return res.status(400).json({ message: 'Invalid Area ID' });
 

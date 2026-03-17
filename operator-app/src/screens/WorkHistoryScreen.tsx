@@ -25,7 +25,7 @@ const WorkHistoryScreen: React.FC = () => {
     try {
       const remote = await fetchWorkHistory();
       setLogs(remote);
-    } catch { /* Keep last good value */ }
+    } catch {  }
     const offline = await getOfflineQueue();
     setPending(offline.map(q => ({
       pump_id:     q.pump_id,

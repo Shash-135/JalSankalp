@@ -50,12 +50,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const storedProfile = await AsyncStorage.getItem(STORAGE_KEYS.operator);
         const tokenValid = await isStoredTokenValid();
 
-        // Allow offline resume only with a valid (unexpired) cached token + profile
+        
         if (storedToken && storedProfile && tokenValid) {
           setToken(storedToken);
           setOperator(JSON.parse(storedProfile));
         } else if (isConnected && storedToken && storedProfile) {
-          // If online but exp missing/expired, force clean slate to avoid using stale creds
+          
           await AsyncStorage.multiRemove([STORAGE_KEYS.token, STORAGE_KEYS.operator, STORAGE_KEYS.tokenExp]);
         }
       } finally {
@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
-    // Auto-logout when API reports unauthorized (expired/invalid token)
+    
     const unsubscribe = onUnauthorized(() => {
       logout();
     });

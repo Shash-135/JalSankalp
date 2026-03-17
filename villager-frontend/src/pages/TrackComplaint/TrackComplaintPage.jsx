@@ -34,7 +34,7 @@ const TrackComplaintPage = () => {
 
   return (
     <div className="grid gap-5">
-      {/* Page Header */}
+      {}
       <div className="page-header animate-slide-up grid gap-1.5">
         <div className="flex items-center gap-2 text-white/70 text-xs font-extrabold uppercase tracking-widest">
           <HiRefresh className="h-4 w-4" />
@@ -46,7 +46,7 @@ const TrackComplaintPage = () => {
         </p>
       </div>
 
-      {/* Responsive: search left, result right on desktop */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <form className="card p-5 grid gap-4" onSubmit={handleTrack}>
           {error && <div className="error-banner">{error}</div>}

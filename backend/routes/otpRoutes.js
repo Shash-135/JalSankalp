@@ -3,15 +3,15 @@ const router = express.Router();
 const pool = require('../database/db');
 const jwt = require('jsonwebtoken');
 
-// Simple in-memory rate limiter per mobile (resets on restart). Suitable for MVP, replace with Redis in production.
+
 const lastSendAt = new Map();
 const OTP_COOLDOWN_MS = 60_000;
 
-// A simple OTP generation securely stored or sent via SMS (Mocked for now)
+
 router.post('/send', async (req, res) => {
     try {
         const { mobile_number } = req.body;
-        const mobile = mobile_number; // Map it internally
+        const mobile = mobile_number; 
         if (!mobile) return res.status(400).json({ message: 'Mobile number required' });
 
         const last = lastSendAt.get(mobile) || 0;
@@ -20,8 +20,8 @@ router.post('/send', async (req, res) => {
             return res.status(429).json({ message: `OTP recently sent. Please retry in ${Math.ceil(waitMs / 1000)}s.` });
         }
 
-        // Logic to send actual SMS goes here. We return a mock success for now.
-        // We ensure Villager exists or create one
+        
+        
         let [rows] = await pool.query('SELECT * FROM Villager WHERE mobile = ?', [mobile]);
         if (rows.length === 0) {
             await pool.query('INSERT INTO Villager (mobile) VALUES (?)', [mobile]);
@@ -39,8 +39,8 @@ router.post('/send', async (req, res) => {
 router.post('/verify', async (req, res) => {
     try {
         const { mobile_number, otp } = req.body;
-        const mobile = mobile_number; // Map it internally
-        // Mock verification
+        const mobile = mobile_number; 
+        
         if (otp !== '123456') {
             return res.status(400).json({ message: 'Invalid OTP' });
         }

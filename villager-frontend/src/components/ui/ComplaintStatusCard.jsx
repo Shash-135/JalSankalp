@@ -13,7 +13,7 @@ const ComplaintStatusCard = ({ complaint }) => {
 
   return (
     <div className="card overflow-hidden animate-slide-up">
-      {/* Header */}
+      {}
       <div className="bg-gradient-to-r from-primary to-blue-700 px-5 py-4 text-white grid gap-1">
         <div className="text-xs font-extrabold opacity-70 uppercase tracking-widest">
           Complaint #{complaint.id}
@@ -25,7 +25,7 @@ const ComplaintStatusCard = ({ complaint }) => {
         </span>
       </div>
 
-      {/* Status Timeline */}
+      {}
       <div className="px-5 py-4 grid gap-4">
         <div className="flex items-center gap-0">
           {['Filed', 'Under Review', 'Resolved'].map((step, i) => {
@@ -49,7 +49,7 @@ const ComplaintStatusCard = ({ complaint }) => {
           })}
         </div>
 
-        {/* Issue Details */}
+        {}
         <div className="bg-slate-50 rounded-xl p-4 grid gap-2 text-sm">
           <div className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-1">Issue Details</div>
           <div className="flex items-center justify-between">
@@ -70,7 +70,7 @@ const ComplaintStatusCard = ({ complaint }) => {
           )}
         </div>
 
-        {/* Submitted Photo */}
+        {}
         {complaint.photo_url && (
           <div>
             <div className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Your Submitted Photo</div>
@@ -82,7 +82,7 @@ const ComplaintStatusCard = ({ complaint }) => {
           </div>
         )}
 
-        {/* Resolution */}
+        {}
         {isResolved && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 grid gap-2">
             <div className="text-xs font-extrabold text-emerald-700 uppercase tracking-widest">Admin Resolution</div>

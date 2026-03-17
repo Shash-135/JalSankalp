@@ -3,7 +3,7 @@ import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/layout/Sidebar';
 import Navbar from './components/layout/Navbar';
 
-// Lazy loading route components for code splitting
+
 const PrivateRoute = lazy(() => import('./components/layout/PrivateRoute'));
 const DashboardPage = lazy(() => import('./pages/Dashboard/DashboardPage'));
 const PumpsPage = lazy(() => import('./pages/Pumps/PumpsPage'));
@@ -46,7 +46,7 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       
-      {/* Secure all dashboard routes with the PrivateRoute wrapper */}
+      {}
       <Route element={<Suspense fallback={<PageLoader />}><PrivateRoute /></Suspense>}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

@@ -40,7 +40,7 @@ const HomePage = () => {
 
   return (
     <div className="grid gap-6 pb-4">
-      {/* Hero — full width on desktop */}
+      {}
       <div className="page-header grid gap-2 animate-slide-up">
         <div className="flex items-center gap-2 text-white/70 text-xs font-extrabold uppercase tracking-widest">
           <span className="h-1.5 w-1.5 rounded-full bg-secondary inline-block"></span>
@@ -54,9 +54,9 @@ const HomePage = () => {
         </p>
       </div>
 
-      {/* Two-column on desktop: QR scanner left, action cards right */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* QR Scanner */}
+        {}
         <div className="card p-5 grid gap-3 h-fit">
           <div className="flex items-center gap-2">
             <HiQrcode className="h-5 w-5 text-primary" />
@@ -66,7 +66,7 @@ const HomePage = () => {
           <QRScanner onScan={handleQRScan} />
         </div>
 
-        {/* Action Cards */}
+        {}
         <div className="grid gap-3 content-start">
           <ActionCard
             to="/complaint"

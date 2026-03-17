@@ -22,13 +22,13 @@ const createComplaint = async (req, res, next) => {
     try {
         const { pump_id, issue_type, description, mobile, name } = req.body;
 
-        // Only use villager id from JWT when the role is villager; operators should submit a mobile to link a villager record
+        
         let villager_id = (req.user && req.user.role === 'villager') ? req.user.id : null;
 
         await connection.beginTransaction();
 
         if (!villager_id && mobile) {
-            // Check if Villager exists
+            
             let [vRows] = await connection.query('SELECT id FROM Villager WHERE mobile = ?', [mobile]);
             if (vRows.length === 0) {
                 const [ins] = await connection.query('INSERT INTO Villager (mobile, name) VALUES (?, ?)', [mobile, name || '']);

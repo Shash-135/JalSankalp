@@ -5,7 +5,7 @@ if (!JWT_SECRET) throw new Error('FATAL: JWT_SECRET environment variable is not 
 
 
 const authMiddleware = (req, res, next) => {
-    // Get token from header
+    
     const authHeader = req.header('Authorization');
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -16,7 +16,7 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded.user; // Contains id and role (admin or operator)
+        req.user = decoded.user; 
         next();
     } catch (err) {
         res.status(401).json({ message: 'Token is not valid' });
@@ -49,7 +49,7 @@ const optionalAuth = (req, res, next) => {
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded.user;
     } catch (err) {
-        // Just proceed without setting req.user
+        
     }
     next();
 };

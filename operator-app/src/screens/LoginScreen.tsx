@@ -27,7 +27,7 @@ const LoginScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.bg}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.center}>
-        {/* Logo area */}
+        {}
         <View style={styles.logoArea}>
           <View style={styles.logoBox}>
             <Text style={styles.logoText}>JS</Text>
@@ -36,7 +36,7 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.brandSub}>Pump Operator Portal</Text>
         </View>
 
-        {/* Card */}
+        {}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Operator Login</Text>
           {error ? <Text style={styles.error}>{error}</Text> : null}

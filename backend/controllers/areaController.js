@@ -1,8 +1,8 @@
 const pool = require('../database/db');
 
-// @desc    Get all areas
-// @route   GET /api/areas
-// @access  Private (Admin)
+
+
+
 const getAreas = async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM Area ORDER BY created_at DESC');
@@ -13,9 +13,9 @@ const getAreas = async (req, res) => {
   }
 };
 
-// @desc    Create new area
-// @route   POST /api/areas
-// @access  Private (Admin)
+
+
+
 const createArea = async (req, res) => {
   const { name, pincode } = req.body;
 

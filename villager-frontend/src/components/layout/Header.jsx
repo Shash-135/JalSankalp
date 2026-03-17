@@ -15,7 +15,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-20 bg-primary text-white shadow-lift">
       <div className="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between gap-6">
-        {/* Logo */}
+        {}
         <Link to="/" className="flex items-center gap-2.5 shrink-0">
           <div className="h-9 w-9 rounded-xl bg-white/15 flex items-center justify-center font-black text-base leading-none">
             JS
@@ -26,7 +26,7 @@ const Header = () => {
           </div>
         </Link>
 
-        {/* Desktop Nav (hidden on mobile) */}
+        {}
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map(({ to, label, Icon }) => {
             const active = pathname === to;
@@ -55,7 +55,7 @@ const Header = () => {
   );
 };
 
-// Bottom nav shown ONLY on mobile (md:hidden)
+
 export const BottomNav = () => {
   const { pathname } = useLocation();
   return (

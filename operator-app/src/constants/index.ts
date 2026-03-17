@@ -1,16 +1,16 @@
-// Prefer runtime-configured API URL; fall back to previous LAN default to avoid breaking dev builds.
-const runtimeBase = (typeof process !== 'undefined' && process.env && (process.env.API_BASE_URL || process.env.EXPO_PUBLIC_API_URL)) || '';
-export const API_BASE_URL = runtimeBase.trim() || 'http://10.67.188.206:5000/api';
 
-// Toggle to run the app without a backend. Set to false when testing against real APIs.
+const runtimeBase = (typeof process !== 'undefined' && process.env && (process.env.API_BASE_URL || process.env.EXPO_PUBLIC_API_URL)) || '';
+export const API_BASE_URL = runtimeBase.trim() || 'http:
+
+
 export const OFFLINE_MODE = false;
 
 export const COLORS = {
-  primary:     '#1a3a8f',   // Project Navy — matches admin + villager
-  primaryDark: '#0f2666',   // Gradient end
-  accent:      '#ea580c',   // Saffron — secondary actions
+  primary:     '#1a3a8f',   
+  primaryDark: '#0f2666',   
+  accent:      '#ea580c',   
   secondary:   '#0f766e',
-  background:  '#eef2ff',   // Light indigo wash
+  background:  '#eef2ff',   
   card:        '#ffffff',
   cardBorder:  '#e4e9f5',
   text:        '#0f172a',
@@ -18,7 +18,7 @@ export const COLORS = {
   success:     '#059669',
   danger:      '#dc2626',
   warning:     '#d97706',
-  running:     '#16a34a',   // Green for active pump state
+  running:     '#16a34a',   
 };
 
 export const SPACING = {

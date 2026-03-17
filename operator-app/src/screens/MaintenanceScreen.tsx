@@ -69,7 +69,7 @@ const MaintenanceScreen: React.FC = () => {
           placeholderTextColor={COLORS.muted}
         />
 
-        {/* Photo preview / picker */}
+        {}
         {photoUri ? (
           <View style={styles.previewBox}>
             <Image source={{ uri: photoUri }} style={styles.preview} />

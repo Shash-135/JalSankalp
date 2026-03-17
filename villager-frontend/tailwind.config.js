@@ -1,6 +1,4 @@
-/***************************************************
- * Tailwind configuration for JALSANKALP Villager UI
- ***************************************************/
+
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {

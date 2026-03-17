@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens ─────────────────────────────────────── */
+
 :root {
   --color-primary:   #1a3a8f;
   --color-secondary: #ea580c;
@@ -14,7 +14,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* ─── Base Reset ─────────────────────────────────────────── */
+
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html { scroll-behavior: smooth; }
@@ -27,15 +27,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Scrollbar ──────────────────────────────────────────── */
+
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
 ::-webkit-scrollbar-track { background: transparent; }
 
-/* ─── Component Classes ──────────────────────────────────── */
+
 @layer components {
 
-  /* Cards */
+  
   .card {
     @apply bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden;
   }
@@ -43,7 +43,7 @@ body {
     @apply bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-card;
   }
 
-  /* Buttons */
+  
   .btn-primary {
     @apply w-full py-3.5 rounded-xl bg-primary text-white font-extrabold text-base
            shadow-card hover:bg-primary/90 active:scale-[.98] transition-all duration-150
@@ -62,7 +62,7 @@ body {
            hover:bg-primary/20 active:scale-[.98] transition-all duration-150;
   }
 
-  /* Form Fields */
+  
   .input-field {
     @apply w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50
            focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none
@@ -73,7 +73,7 @@ body {
     @apply text-xs font-extrabold text-slate-600 uppercase tracking-widest;
   }
 
-  /* Status Badges */
+  
   .badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold border;
   }
@@ -82,12 +82,12 @@ body {
   .badge-inactive { @apply bg-red-50 text-red-600 border-red-200; }
   .badge-resolved { @apply bg-emerald-50 text-emerald-700 border-emerald-200; }
 
-  /* Page Header shared style */
+  
   .page-header {
     @apply bg-gradient-to-br from-primary to-blue-700 text-white px-5 py-7 md:px-8 md:py-10 rounded-2xl shadow-lift;
   }
 
-  /* Bottom Nav Items */
+  
   .nav-item {
     @apply flex flex-col items-center justify-center gap-0.5 text-[10px] font-extrabold
            uppercase tracking-wider px-3 py-2 rounded-xl transition-all duration-200;
@@ -95,7 +95,7 @@ body {
   .nav-item-active  { @apply text-primary bg-primary/10; }
   .nav-item-default { @apply text-slate-500 hover:text-primary hover:bg-slate-100; }
 
-  /* Error Banner */
+  
   .error-banner {
     @apply p-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl border border-red-100;
   }
