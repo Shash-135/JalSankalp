@@ -23,11 +23,9 @@ npm-debug.log*
 Thumbs.db
 
 # Test / debug scripts
-backend/test_complaint.js
-backend/test_upload.js
-backend/gen_qr.js
-backend/qr_pump_*.png
 backend/logs
+backend/uploads
+backend/qr_codes
 
 # Editor
 .vscode/
