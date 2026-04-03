@@ -20,7 +20,7 @@ const DashboardPage = () => {
   ), [operators, strSearch]);
 
   const filteredComplaints = useMemo(() => complaints.filter(c => 
-    !strSearch || c.id?.toString().includes(strSearch) || c.villager_name?.toLowerCase().includes(strSearch) || c.pump_name?.toLowerCase().includes(strSearch) || c.issue_type?.toLowerCase().includes(strSearch) || c.status?.toLowerCase().includes(strSearch)
+    !strSearch || c.id?.toString().includes(strSearch) || c.villager_name?.toLowerCase().includes(strSearch) || c.villager_email?.toLowerCase().includes(strSearch) || c.pump_name?.toLowerCase().includes(strSearch) || c.issue_type?.toLowerCase().includes(strSearch) || c.status?.toLowerCase().includes(strSearch)
   ).slice(0, 5), [complaints, strSearch]); // Dashboard shows limited list
 
   return (
@@ -112,8 +112,8 @@ const DashboardPage = () => {
         data={filteredComplaints.map(c => ({
           ...c,
           subject: c.issue_type,
-          village: c.pump_name,
-          logged: new Date(c.created_at).toLocaleDateString()
+          village: c.location || c.pump_name || c.villager_name || '—',
+          logged: new Date(c.created_at).toLocaleDateString('en-IN')
         }))}
       />
     </div>

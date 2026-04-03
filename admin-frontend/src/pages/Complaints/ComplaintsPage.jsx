@@ -32,7 +32,12 @@ const ComplaintsPage = () => {
 
   const enrichedComplaints = filteredComplaints.map(c => ({
     ...c,
-    villager: c.villager_name || '—',
+    villager: (
+      <div>
+        <div className="font-bold">{c.villager_name || '—'}</div>
+        <div className="text-xs text-slate-500">{c.villager_email || '—'}</div>
+      </div>
+    ),
     pump: c.pump_name || '—',
     type: c.issue_type || '—',
     photo: c.photo_url ? (
@@ -57,7 +62,7 @@ const ComplaintsPage = () => {
 
   const columns = [
     { key: 'id', label: '#' },
-    { key: 'villager', label: 'Villager' },
+    { key: 'villager', label: 'Villager Info' },
     { key: 'pump', label: 'Pump' },
     { key: 'type', label: 'Issue' },
     { key: 'photo', label: 'Photo' },

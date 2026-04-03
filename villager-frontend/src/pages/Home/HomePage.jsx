@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { HiExclamationCircle, HiRefresh, HiLightBulb, HiQrcode } from 'react-icons/hi';
 import QRScanner from '../../components/ui/QRScanner.jsx';
 import api from '../../services/api.js';
+import { useTranslation } from 'react-i18next';
 
 const ActionCard = ({ to, icon: Icon, title, subtitle, accent }) => (
   <Link
@@ -21,6 +22,7 @@ const ActionCard = ({ to, icon: Icon, title, subtitle, accent }) => (
 );
 
 const HomePage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [scanError, setScanError] = useState(null);
 
@@ -40,53 +42,53 @@ const HomePage = () => {
 
   return (
     <div className="grid gap-6 pb-4">
-      {}
+      {/* HEADER */}
       <div className="page-header grid gap-2 animate-slide-up">
         <div className="flex items-center gap-2 text-white/70 text-xs font-extrabold uppercase tracking-widest">
           <span className="h-1.5 w-1.5 rounded-full bg-secondary inline-block"></span>
-          Live Services
+          {t('home.liveServices')}
         </div>
         <h1 className="text-2xl md:text-3xl font-black text-white leading-tight">
-          Water Pump Support Portal
+          {t('home.portalTitle')}
         </h1>
         <p className="text-sm text-white/75 font-semibold leading-relaxed max-w-xl">
-          Scan the QR code on any public JalSankalp pump to file a grievance or view its status in real-time.
+          {t('home.portalDesc')}
         </p>
       </div>
 
-      {}
+      {/* CONTENT */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {}
+        {/* SCANNER */}
         <div className="card p-5 grid gap-3 h-fit">
           <div className="flex items-center gap-2">
             <HiQrcode className="h-5 w-5 text-primary" />
-            <span className="font-extrabold text-ink text-sm uppercase tracking-wider">Scan Pump QR Code</span>
+            <span className="font-extrabold text-ink text-sm uppercase tracking-wider">{t('home.scanTitle')}</span>
           </div>
           {scanError && <div className="error-banner">{scanError}</div>}
           <QRScanner onScan={handleQRScan} />
         </div>
 
-        {}
+        {/* ACTIONS */}
         <div className="grid gap-3 content-start">
           <ActionCard
             to="/complaint"
             icon={HiExclamationCircle}
-            title="Submit Grievance"
-            subtitle="Report a broken pump, leak, or supply issue"
+            title={t('home.submitTitle')}
+            subtitle={t('home.submitDesc')}
             accent="border-l-secondary"
           />
           <ActionCard
             to="/track"
             icon={HiRefresh}
-            title="Track Request"
-            subtitle="Check the live status of your complaint"
+            title={t('home.trackTitle')}
+            subtitle={t('home.trackDesc')}
             accent="border-l-primary"
           />
           <ActionCard
             to="/awareness"
             icon={HiLightBulb}
-            title="Water Conservation Tips"
-            subtitle="Official directives & schedules for residents"
+            title={t('home.tipsTitle')}
+            subtitle={t('home.tipsDesc')}
             accent="border-l-success"
           />
         </div>

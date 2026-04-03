@@ -58,7 +58,7 @@ const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
             <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Villager Submission</div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div><span className="font-semibold text-slate-600">Name:</span> {complaint.villager_name}</div>
-              <div><span className="font-semibold text-slate-600">Mobile:</span> {complaint.villager_mobile}</div>
+              <div><span className="font-semibold text-slate-600">Email:</span> {complaint.villager_email}</div>
               <div><span className="font-semibold text-slate-600">Pump:</span> {complaint.pump_name}</div>
               <div><span className="font-semibold text-slate-600">Issue:</span> {complaint.issue_type}</div>
               <div className="col-span-2"><span className="font-semibold text-slate-600">Description:</span> {complaint.description}</div>
