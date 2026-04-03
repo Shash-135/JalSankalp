@@ -41,13 +41,13 @@ const DashboardPage = () => {
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <ChartCard
-            title="Daily Pump Usage"
-            description="Volume pumped in kiloliters"
+            title="Pump Usage & Water Output"
+            description="Runtime (mins) & water pumped (KL)"
             type="bar"
             data={usageChart}
             options={{
               maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
+              plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true } } },
               scales: {
                 y: { grid: { display: false }, ticks: { color: '#334155' } },
                 x: { grid: { display: false }, ticks: { color: '#334155' } },

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import api from '../../services/api';
 
 const AddAreaModal = ({ onClose, onSaved }) => {
-  const [form, setForm] = useState({ name: '', pincode: '' });
+  const [form, setForm] = useState({ name: '', pincode: '', capacity_kl: '' });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -42,16 +42,29 @@ const AddAreaModal = ({ onClose, onSaved }) => {
                onChange={(e) => setForm({...form, name: e.target.value})}
             />
           </div>
-          <div>
-            <label className="text-sm font-semibold text-slate-700">Pincode</label>
-            <input 
-               type="text" 
-               className="w-full mt-1 px-3 py-2 border rounded-xl" 
-               placeholder="411001"
-               required 
-               value={form.pincode} 
-               onChange={(e) => setForm({...form, pincode: e.target.value})}
-            />
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="text-sm font-semibold text-slate-700">Pincode</label>
+              <input 
+                 type="text" 
+                 className="w-full mt-1 px-3 py-2 border rounded-xl" 
+                 placeholder="411001"
+                 required 
+                 value={form.pincode} 
+                 onChange={(e) => setForm({...form, pincode: e.target.value})}
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-sm font-semibold text-slate-700">Daily Capacity (KL)</label>
+              <input 
+                 type="number" 
+                 className="w-full mt-1 px-3 py-2 border rounded-xl" 
+                 placeholder="5000"
+                 required 
+                 value={form.capacity_kl} 
+                 onChange={(e) => setForm({...form, capacity_kl: e.target.value})}
+              />
+            </div>
           </div>
           <div className="flex justify-end gap-3 mt-4">
             <button type="button" className="px-4 py-2 font-semibold text-slate-600" onClick={onClose}>Cancel</button>

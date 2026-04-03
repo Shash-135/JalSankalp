@@ -46,12 +46,20 @@ export const AppProvider = ({ children }) => {
       const usageData = usageRes.data || [];
       const usageChart = {
         labels: usageData.map(u => u.name),
-        datasets: [{
-          label: 'Total Pump Usage (mins)',
-          data: usageData.map(u => u.total_duration_minutes || 0),
-          backgroundColor: '#2563eb',
-          borderRadius: 12,
-        }]
+        datasets: [
+          {
+            label: 'Runtime (mins)',
+            data: usageData.map(u => parseFloat(u.total_duration_minutes) || 0),
+            backgroundColor: '#2563eb',
+            borderRadius: 12,
+          },
+          {
+            label: 'Water Pumped (KL)',
+            data: usageData.map(u => Math.round(((parseFloat(u.total_water_liters) || 0) / 1000) * 100) / 100),
+            backgroundColor: '#0f766e',
+            borderRadius: 12,
+          }
+        ]
       };
 
       const distData = distRes.data?.breakdownByType || [];

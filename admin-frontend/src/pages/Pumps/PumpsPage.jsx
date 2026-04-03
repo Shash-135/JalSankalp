@@ -43,7 +43,8 @@ const PumpsPage = () => {
           { key: 'name', label: 'Name' },
           { key: 'location', label: 'Location' },
           { key: 'status', label: 'Status' },
-          { key: 'uptime', label: 'Uptime' },
+          { key: 'motor_power_hp', label: 'Power (HP)' },
+          { key: 'flow_rate_lpm', label: 'Flow (L/min)' },
         ]}
         data={searchFilteredPumps}
         renderActions={(row) => (

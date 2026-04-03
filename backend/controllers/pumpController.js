@@ -66,16 +66,20 @@ const getPumpLogs = async (req, res, next) => {
 
 const createPump = async (req, res, next) => {
     try {
-        const { area_id, name, installation_date } = req.body;
+        const { area_id, name, installation_date, motor_power, pipe_size } = req.body;
         const qrContent = `QR_PUMP_${uuidv4()}`;
 
         
         const [areas] = await pool.query('SELECT id FROM Area WHERE id = ?', [area_id]);
         if (areas.length === 0) return res.status(400).json({ message: 'Invalid Area ID' });
 
+        const hp = parseFloat(motor_power) || 0;
+        const pipe = parseFloat(pipe_size) || 0;
+        const flow_rate = hp * 75;
+
         const [result] = await pool.query(
-            'INSERT INTO Pump (area_id, qr_code, name, installation_date) VALUES (?, ?, ?, ?)',
-            [area_id, qrContent, name, installation_date]
+            'INSERT INTO Pump (area_id, qr_code, name, installation_date, motor_power_hp, pipe_size_inches, flow_rate_lpm) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [area_id, qrContent, name, installation_date, hp, pipe, flow_rate]
         );
 
         res.status(201).json({ id: result.insertId, qr_code: qrContent, message: 'Pump created successfully' });

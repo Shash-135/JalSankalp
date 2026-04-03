@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS Area (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     pincode VARCHAR(10) NOT NULL,
+    capacity_kl DECIMAL(10,2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -33,6 +34,9 @@ CREATE TABLE IF NOT EXISTS Pump (
     name VARCHAR(100) NOT NULL,
     status ENUM('active', 'maintenance', 'inactive') DEFAULT 'active',
     installation_date DATE,
+    motor_power_hp DECIMAL(10,2) DEFAULT 0,
+    pipe_size_inches DECIMAL(10,2) DEFAULT 0,
+    flow_rate_lpm DECIMAL(10,2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (area_id) REFERENCES Area(id) ON DELETE CASCADE
 );
@@ -57,6 +61,7 @@ CREATE TABLE IF NOT EXISTS PumpLog (
     action ENUM('start', 'stop', 'report') NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     duration INT DEFAULT 0 COMMENT 'Duration in minutes (calculated on stop)',
+    water_pumped_l DECIMAL(12,2) DEFAULT 0,
     notes TEXT,
     photo_url VARCHAR(255),
     FOREIGN KEY (pump_id) REFERENCES Pump(id) ON DELETE CASCADE,

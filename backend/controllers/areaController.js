@@ -17,7 +17,7 @@ const getAreas = async (req, res) => {
 
 
 const createArea = async (req, res) => {
-  const { name, pincode } = req.body;
+  const { name, pincode, capacity_kl } = req.body;
 
   if (!name || !pincode) {
     return res.status(400).json({ error: 'Name and pincode are required' });
@@ -25,10 +25,10 @@ const createArea = async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      'INSERT INTO Area (name, pincode) VALUES (?, ?)',
-      [name, pincode]
+      'INSERT INTO Area (name, pincode, capacity_kl) VALUES (?, ?, ?)',
+      [name, pincode, capacity_kl || 0]
     );
-    res.status(201).json({ id: result.insertId, name, pincode });
+    res.status(201).json({ id: result.insertId, name, pincode, capacity_kl: capacity_kl || 0 });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error creating area' });

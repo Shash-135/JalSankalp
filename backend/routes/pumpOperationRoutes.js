@@ -12,6 +12,7 @@ router.get('/logs', authMiddleware, operatorAuth, pumpOperationController.getPum
 router.post('/report', authMiddleware, operatorAuth, upload.single('photo'), pumpOperationController.reportMaintenance);
 
 
+router.get('/status/:pump_id', authMiddleware, operatorAuth, pumpOperationController.getPumpStatus);
 router.get('/:qr_code', pumpOperationController.getPumpByQR);
 
 module.exports = router;

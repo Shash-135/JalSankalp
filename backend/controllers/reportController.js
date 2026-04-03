@@ -3,13 +3,22 @@ const pool = require('../database/db');
 const getPumpUsageReport = async (req, res) => {
     try {
         const [rows] = await pool.query(`
-            SELECT p.id, p.name, SUM(pl.duration) as total_duration_minutes, COUNT(pl.id) as total_logs
+            SELECT p.id, p.name, 
+                   SUM(pl.duration) as total_duration_minutes, 
+                   SUM(pl.water_pumped_l) as total_water_liters,
+                   COUNT(pl.id) as total_logs
             FROM Pump p
             LEFT JOIN PumpLog pl ON p.id = pl.pump_id AND pl.action = 'stop'
             GROUP BY p.id, p.name
             ORDER BY total_duration_minutes DESC
         `);
-        res.json(rows);
+        const parsed = rows.map(r => ({
+            ...r,
+            total_duration_minutes: parseFloat(r.total_duration_minutes) || 0,
+            total_water_liters: parseFloat(r.total_water_liters) || 0,
+            total_logs: parseInt(r.total_logs) || 0,
+        }));
+        res.json(parsed);
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');

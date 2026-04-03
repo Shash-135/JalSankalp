@@ -155,6 +155,11 @@ export const fetchWorkHistory = async (): Promise<PumpLog[]> => {
   return res.data || [];
 };
 
+export const fetchPumpStatus = async (pumpId: string) => {
+  const res = await api.get(`/pump/status/${pumpId}`);
+  return res.data;
+};
+
 export const submitMaintenance = async (payload: {
   pumpId: string;
   operatorId: string;

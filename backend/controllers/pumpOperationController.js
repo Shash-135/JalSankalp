@@ -43,6 +43,17 @@ const stopPump = async (req, res, next) => {
         const { pump_id, notes } = req.body;
         const operator_id = req.user.id;
         
+        // Fetch the pump and its area to get flow rate and capacity
+        const [pumpData] = await pool.query(`
+            SELECT p.id, p.area_id, p.flow_rate_lpm, a.capacity_kl 
+            FROM Pump p
+            JOIN Area a ON p.area_id = a.id
+            WHERE p.id = ?`, 
+            [pump_id]
+        );
+        
+        if (pumpData.length === 0) return res.status(404).json({ message: 'Pump not found' });
+        const pump = pumpData[0];
         
         const [lastLog] = await pool.query(
             'SELECT * FROM PumpLog WHERE pump_id = ? AND action = "start" ORDER BY timestamp DESC LIMIT 1',
@@ -56,13 +67,36 @@ const stopPump = async (req, res, next) => {
             duration = Math.floor((stopTime - startTime) / 60000); 
         }
 
-        
+        const flow_rate = parseFloat(pump.flow_rate_lpm) || 0;
+        const water_pumped_l = duration * flow_rate;
+
         await pool.query(
-            'INSERT INTO PumpLog (pump_id, operator_id, action, duration, notes) VALUES (?, ?, "stop", ?, ?)', 
-            [pump_id, operator_id, duration, notes]
+            'INSERT INTO PumpLog (pump_id, operator_id, action, duration, water_pumped_l, notes) VALUES (?, ?, "stop", ?, ?, ?)', 
+            [pump_id, operator_id, duration, water_pumped_l, notes]
         );
 
-        res.status(201).json({ message: 'Pump stopped successfully', duration });
+        // Check if area is exceeding capacity
+        let capacityWarning = false;
+        if (pump.capacity_kl > 0) {
+            const [dailyUsage] = await pool.query(`
+                SELECT SUM(water_pumped_l) as total_l
+                FROM PumpLog pl
+                JOIN Pump p ON pl.pump_id = p.id
+                WHERE p.area_id = ? AND DATE(pl.timestamp) = CURDATE()
+            `, [pump.area_id]);
+            
+            const totalPumpedKl = (dailyUsage[0].total_l || 0) / 1000;
+            if (totalPumpedKl >= (pump.capacity_kl * 0.8)) {
+                capacityWarning = true;
+            }
+        }
+
+        res.status(201).json({ 
+            message: 'Pump stopped successfully', 
+            duration,
+            water_pumped_l,
+            capacityWarning 
+        });
     } catch (err) {
         next(err);
     }
@@ -76,9 +110,17 @@ const syncLogs = async (req, res, next) => {
         if (!logs || !logs.length) return res.status(400).json({ message: 'No logs to sync' });
 
         for (const log of logs) {
+            let water_pumped_l = 0;
+            if (log.action === 'stop' && log.duration) {
+                const [pumpData] = await pool.query('SELECT flow_rate_lpm FROM Pump WHERE id = ?', [log.pump_id]);
+                if (pumpData.length > 0) {
+                    water_pumped_l = (parseFloat(pumpData[0].flow_rate_lpm) || 0) * log.duration;
+                }
+            }
+
             await pool.query(
-                'INSERT INTO PumpLog (pump_id, operator_id, action, timestamp, duration, notes) VALUES (?, ?, ?, ?, ?, ?)',
-                [log.pump_id, operator_id, log.action, log.timestamp ? new Date(log.timestamp) : new Date(), log.duration || 0, log.notes]
+                'INSERT INTO PumpLog (pump_id, operator_id, action, timestamp, duration, water_pumped_l, notes) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [log.pump_id, operator_id, log.action, log.timestamp ? new Date(log.timestamp) : new Date(), log.duration || 0, water_pumped_l, log.notes]
             );
         }
         res.json({ message: 'Logs synced successfully' });
@@ -124,4 +166,45 @@ const reportMaintenance = async (req, res, next) => {
     }
 };
 
-module.exports = { getPumpByQR, startPump, stopPump, syncLogs, getPumpLogs, reportMaintenance };
+const getPumpStatus = async (req, res, next) => {
+    try {
+        const { pump_id } = req.params;
+
+        const [lastLog] = await pool.query(
+            'SELECT action, timestamp FROM PumpLog WHERE pump_id = ? ORDER BY timestamp DESC LIMIT 1',
+            [pump_id]
+        );
+
+        const [pumpData] = await pool.query(`
+            SELECT p.flow_rate_lpm, p.motor_power_hp, a.capacity_kl, p.area_id
+            FROM Pump p
+            JOIN Area a ON p.area_id = a.id
+            WHERE p.id = ?`, [pump_id]);
+
+        let todayPumpedL = 0;
+        if (pumpData.length > 0) {
+            const [daily] = await pool.query(`
+                SELECT COALESCE(SUM(water_pumped_l), 0) as total_l
+                FROM PumpLog pl
+                JOIN Pump p ON pl.pump_id = p.id
+                WHERE p.area_id = ? AND DATE(pl.timestamp) = CURDATE()
+            `, [pumpData[0].area_id]);
+            todayPumpedL = parseFloat(daily[0].total_l) || 0;
+        }
+
+        const isRunning = lastLog.length > 0 && lastLog[0].action === 'start';
+
+        res.json({
+            isRunning,
+            startedAt: isRunning ? lastLog[0].timestamp : null,
+            flow_rate_lpm: pumpData.length > 0 ? parseFloat(pumpData[0].flow_rate_lpm) || 0 : 0,
+            capacity_kl: pumpData.length > 0 ? parseFloat(pumpData[0].capacity_kl) || 0 : 0,
+            today_pumped_l: todayPumpedL,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = { getPumpByQR, startPump, stopPump, syncLogs, getPumpLogs, reportMaintenance, getPumpStatus };
+
