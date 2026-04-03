@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { HiPaperAirplane } from 'react-icons/hi';
 import api from '../../services/api.js';
 
 const issueTypes = ['No water', 'Low pressure', 'Leakage', 'Noise', 'Electrical issue', 'Other'];
@@ -72,7 +73,7 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
 
       <div>
         <label className="label">Mobile Number</label>
-        <div className="flex gap-2 mt-1">
+        <div className="flex flex-col sm:flex-row gap-3 mt-1">
           <input
             name="mobile"
             className="input-field flex-1 mt-0"
@@ -86,7 +87,7 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
           <button
             type="button"
             onClick={sendOtp}
-            className="px-4 py-3 rounded-xl bg-primary text-white font-extrabold text-sm hover:bg-primary/90 active:scale-[.98] transition-all whitespace-nowrap"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary text-white font-extrabold text-sm hover:bg-primary/90 active:scale-[.98] transition-all whitespace-nowrap"
           >
             {otpSent ? 'Resend' : 'Get OTP'}
           </button>
@@ -154,15 +155,16 @@ const ComplaintForm = ({ pumpId, pumpName, onSubmitted }) => {
 
       <div>
         <label className="label">Photo (Optional)</label>
-        <div className="mt-1 border-2 border-dashed border-slate-200 rounded-xl p-4 text-center text-sm text-muted font-semibold hover:border-primary/40 transition-colors cursor-pointer">
-          <input type="file" name="image" accept="image/*" onChange={handleChange} className="w-full opacity-0 absolute pointer-events-none" id="imgUpload" />
+        <div className="relative mt-1 border-2 border-dashed border-slate-200 rounded-xl p-4 text-center text-sm text-muted font-semibold hover:border-primary/40 transition-colors cursor-pointer">
+          <input type="file" name="image" accept="image/*" onChange={handleChange} className="absolute inset-0 w-full h-full opacity-0 pointer-events-none cursor-pointer" id="imgUpload" />
           <label htmlFor="imgUpload" className="cursor-pointer">
             {form.image ? `📷 ${form.image.name}` : '📷 Tap to attach a photo'}
           </label>
         </div>
       </div>
 
-      <button type="submit" className="btn-primary" disabled={sending || !otpSent}>
+      <button type="submit" className="btn-primary flex items-center justify-center gap-2" disabled={sending || !otpSent}>
+        <HiPaperAirplane className="h-5 w-5 rotate-90" />
         {sending ? 'Submitting...' : 'Submit Complaint'}
       </button>
     </form>

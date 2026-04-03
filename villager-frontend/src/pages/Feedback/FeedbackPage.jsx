@@ -3,8 +3,8 @@ import { HiStar } from 'react-icons/hi';
 import FeedbackForm from '../../components/forms/FeedbackForm.jsx';
 
 const FeedbackPage = () => (
-  <div className="grid gap-5">
-    <div className="page-header animate-slide-up grid gap-1.5">
+  <div className="grid gap-6 pb-4">
+    <div className="page-header grid gap-2 animate-slide-up">
       <div className="flex items-center gap-2 text-white/70 text-xs font-extrabold uppercase tracking-widest">
         <HiStar className="h-4 w-4" />
         Feedback
