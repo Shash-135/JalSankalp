@@ -101,10 +101,14 @@ const PumpControlScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
           ? `${emoji} CAPACITY FULL!`
           : `${emoji} ${threshold}% Capacity Reached`;
         const message = threshold >= 100
-          ? `The area's daily water quota is fully used!\n\nTotal: ${(totalWaterL / 1000).toFixed(2)} KL / ${capacityKl} KL\n\nSTOP the pump and contact your supervisor immediately.`
+          ? `The area's daily water quota is fully used!\n\nTotal: ${(totalWaterL / 1000).toFixed(2)} KL / ${capacityKl} KL\n\nThe pump has been automatically stopped.`
           : `${threshold}% of the area's daily water capacity has been used.\n\nTotal: ${(totalWaterL / 1000).toFixed(2)} KL / ${capacityKl} KL\n\nRemaining: ${((capacityL - totalWaterL) / 1000).toFixed(2)} KL`;
 
         Alert.alert(title, message, [{ text: 'OK' }]);
+
+        if (threshold >= 100) {
+          handleStop();
+        }
       }
     }
   }, [elapsed, startTime, capacityKl, flowRateLpm, todayPumpedL]);
@@ -150,14 +154,14 @@ const PumpControlScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
       setStartTime(null);
 
       const waterLiters = result?.water_pumped_l ?? getSessionWaterL();
-      const durationMins = result?.duration ?? Math.floor(elapsed / 60);
+      const durationMins = result?.duration != null ? result.duration : Math.floor(elapsed / 60);
 
       Alert.alert(
         '✅ Pump Stopped',
         `Session logged successfully.\n\nDuration: ${durationMins} mins\nWater pumped: ${waterLiters.toFixed(1)} liters`,
       );
     } catch {
-      await saveToOfflineQueue({ action: 'stop', pump_id: pumpId, timestamp: end.toISOString() });
+      await saveToOfflineQueue({ action: 'stop', pump_id: pumpId, timestamp: end.toISOString(), duration: Math.floor(elapsed / 60) });
       setStartTime(null);
       Alert.alert('Offline mode', 'Stop log saved offline and will sync when online.');
     } finally {
@@ -167,6 +171,7 @@ const PumpControlScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
 
   const isRunning = !!startTime;
   const pct = getCapacityPct();
+  const isCapacityFull = capacityKl > 0 && todayPumpedL >= (capacityKl * 1000);
   const barColor = pct >= 100 ? COLORS.danger : pct >= 75 ? '#ea580c' : pct >= 50 ? COLORS.warning : COLORS.running;
 
   if (checking) {
@@ -239,10 +244,10 @@ const PumpControlScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Pu
       <View style={styles.controls}>
         {!isRunning && (
           <CustomButton
-            title={loading ? 'Starting...' : '▶  Start Pump'}
+            title={isCapacityFull ? 'Quota Full (Disabled)' : (loading ? 'Starting...' : '▶  Start Pump')}
             onPress={handleStart}
-            type="primary"
-            disabled={loading}
+            type={isCapacityFull ? "secondary" : "primary"}
+            disabled={loading || isCapacityFull}
             loading={loading}
           />
         )}

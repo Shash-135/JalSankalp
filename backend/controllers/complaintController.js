@@ -69,7 +69,7 @@ const createComplaint = async (req, res, next) => {
             return res.status(400).json({ error: 'Invalid Pump ID. Please check and try again.' });
         }
 
-        const photoUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const photoUrl = req.file ? req.file.path : null;
 
         const [result] = await connection.query(
             'INSERT INTO Complaint (villager_id, pump_id, issue_type, description, photo_url) VALUES (?, ?, ?, ?, ?)',
@@ -89,7 +89,7 @@ const createComplaint = async (req, res, next) => {
 const resolveComplaint = async (req, res, next) => {
     try {
         const { note } = req.body;
-        const resolutionPhotoUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const resolutionPhotoUrl = req.file ? req.file.path : null;
         const complaintId = req.params.id;
         
         // Fetch villager details to send email

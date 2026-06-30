@@ -27,6 +27,31 @@ const startPump = async (req, res, next) => {
         const { pump_id, notes } = req.body;
         const operator_id = req.user.id;
         
+        // Check if area daily quota is full
+        const [pumpData] = await pool.query(`
+            SELECT p.area_id, a.capacity_kl 
+            FROM Pump p
+            JOIN Area a ON p.area_id = a.id
+            WHERE p.id = ?`, 
+            [pump_id]
+        );
+
+        if (pumpData.length > 0) {
+            const pump = pumpData[0];
+            if (pump.capacity_kl > 0) {
+                const [dailyUsage] = await pool.query(`
+                    SELECT COALESCE(SUM(water_pumped_l), 0) as total_l
+                    FROM PumpLog pl
+                    JOIN Pump p ON pl.pump_id = p.id
+                    WHERE p.area_id = ? AND DATE(pl.timestamp) = CURDATE()
+                `, [pump.area_id]);
+                
+                const totalPumpedKl = parseFloat(dailyUsage[0].total_l) / 1000;
+                if (totalPumpedKl >= pump.capacity_kl) {
+                    return res.status(403).json({ message: 'Daily water quota for this area is full. Pump cannot be started.' });
+                }
+            }
+        }
         
         await pool.query(
             'INSERT INTO PumpLog (pump_id, operator_id, action, notes) VALUES (?, ?, "start", ?)', 
@@ -60,7 +85,7 @@ const stopPump = async (req, res, next) => {
             [pump_id]
         );
 
-        let duration = 0;
+        let duration = 0; // Duration in minutes
         if (lastLog.length > 0) {
             const startTime = new Date(lastLog[0].timestamp).getTime();
             const stopTime = new Date().getTime();
@@ -114,6 +139,7 @@ const syncLogs = async (req, res, next) => {
             if (log.action === 'stop' && log.duration) {
                 const [pumpData] = await pool.query('SELECT flow_rate_lpm FROM Pump WHERE id = ?', [log.pump_id]);
                 if (pumpData.length > 0) {
+                    // Assuming log.duration from frontend synced offline logs is in minutes
                     water_pumped_l = (parseFloat(pumpData[0].flow_rate_lpm) || 0) * log.duration;
                 }
             }
@@ -152,7 +178,7 @@ const reportMaintenance = async (req, res, next) => {
         let photo_url = null;
 
         if (req.file) {
-            photo_url = `/uploads/${req.file.filename}`;
+            photo_url = req.file.path;
         }
 
         await pool.query(
