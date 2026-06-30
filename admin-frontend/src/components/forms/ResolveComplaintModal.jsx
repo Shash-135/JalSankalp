@@ -3,6 +3,12 @@ import api from '../../services/api';
 
 const BASE = api.defaults.baseURL.replace(/\/api$/, '');
 
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${BASE}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
   const [complaint, setComplaint] = useState(null);
   const [note, setNote] = useState('');
@@ -67,7 +73,7 @@ const ResolveComplaintModal = ({ complaintId, onClose, onSaved }) => {
               <div>
                 <div className="text-xs font-semibold text-slate-500 mb-1">Villager Photo</div>
                 <img 
-                  src={`${BASE}${complaint.photo_url}`} 
+                  src={getImageUrl(complaint.photo_url)} 
                   alt="Villager submitted" 
                   className="w-full max-h-48 object-cover rounded-lg border border-slate-200" 
                 />

@@ -8,6 +8,11 @@ import api from '../../services/api';
 
 const BASE = api.defaults.baseURL.replace(/\/api$/, '');
 
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${BASE}${url.startsWith('/') ? '' : '/'}${url}`;
+};
 const ComplaintsPage = () => {
   const { complaints, refreshData, searchQuery } = useAppContext();
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
@@ -42,10 +47,10 @@ const ComplaintsPage = () => {
     type: c.issue_type || '—',
     photo: c.photo_url ? (
       <img
-        src={`${BASE}${c.photo_url}`}
+        src={getImageUrl(c.photo_url)}
         alt="Villager photo"
         className="w-12 h-12 object-cover rounded-lg cursor-pointer border border-slate-200 hover:scale-105 transition-transform"
-        onClick={() => setPreviewImg(`${BASE}${c.photo_url}`)}
+        onClick={() => setPreviewImg(getImageUrl(c.photo_url))}
       />
     ) : <span className="text-slate-300 text-xs">No photo</span>,
     action: c.status !== 'resolved' ? (
