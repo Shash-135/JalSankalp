@@ -1,41 +1,85 @@
-# JalSankalp
+# JalSankalp 💧
 
-Welcome to the **JalSankalp** project—a comprehensive Smart Water Pump Monitoring & Complaint Management System.
+Welcome to **JalSankalp**—a comprehensive Smart Water Pump Monitoring & Complaint Management System designed to optimize water distribution, monitor real-time pump data, and seamlessly manage villager complaints from the ground level up to the administrative dashboard.
 
-## Overview
+## 🌐 Live Demos & Links
 
-JalSankalp aims to optimize water pump operations, monitor real-time data, and seamlessly manage complaints from the village level up to the administrative dashboard. 
+You can explore the entire JalSankalp ecosystem live without needing to run any code locally!
 
-The project is structured into four main components:
+* **Admin Dashboard:** [https://jalsankalp-admin.vercel.app](https://jalsankalp-admin.vercel.app)
+* **Villager Portal:** [https://jalsankalp-villager.vercel.app](https://jalsankalp-villager.vercel.app)
+* **Backend API:** [https://jalsankalp.onrender.com](https://jalsankalp.onrender.com) (Render Free Tier)
 
-- **Admin Frontend**: A central dashboard for administrators to monitor all pump networks, manage operators, oversee complaints, and view overarching system statistics. Located in the [`admin-frontend/`](./admin-frontend) directory.
-- **Operator App**: A mobile application built for ground-level pump operators. Allows them to quickly log pump states, review local complaints, and synchronize offline field data. Located in the [`operator-app/`](./operator-app) directory.
-- **Villager Frontend**: A portal designed for villagers to lodge complaints, view public water availability, and connect with administrators. Located in the [`villager-frontend/`](./villager-frontend) directory.
-- **Backend**: The core server processing application, handling business logic, data persistence, and system-wide synchronization. Located in the [`backend/`](./backend) directory.
+### 🔐 Demo Credentials
+To test the secure areas of the applications, use the following demo accounts:
 
-## Getting Started
+**Admin Account** (For Admin Dashboard)
+- **Email:** `admin1@example.com`
+- **Password:** `admin123`
 
-To get started, navigate to each respective folder and follow their internal README or standard Node.js project launch methods (e.g., `npm install` and `npm run dev` / `npm run android`).
+**Operator Account** (For the Android App)
+- **Email:** `operator1@example.com`
+- **Password:** `admin123`
 
-## Installation
+*(Note: The Villager Portal uses an Email OTP system. You can enter your own email to test it. If the email doesn't arrive due to spam filters, you can use the master bypass code `123456` to log in instantly.)*
 
-Ensure you have Node.js installed locally. 
+---
 
-For the frontend/apps:
-```bash
-cd [directory-name]
-npm install
-npm run dev 
-npm run android # for the react-native/expo operator-app
-```
+## 📱 JalSankalp Operator App (Android)
 
-For the backend:
+Ground-level pump operators use a dedicated mobile application to log pump states, manage offline field data, and sync with the central server. 
+
+### How to Install & Test
+1. Go to the **[Releases](../../releases)** tab on this GitHub repository.
+2. Download the latest `JalSankalp-Operator-App.apk` file to your Android smartphone.
+3. Open the downloaded `.apk` file. 
+4. *Note: Your phone may prompt you to "Allow installation from unknown sources". Please enable this to proceed.*
+5. Once installed, open the app and log in using the **Operator Demo Credentials** listed above!
+
+---
+
+## 🏗️ Project Architecture
+
+The project is structured into four main components inside this monorepo:
+
+1. **`admin-frontend/`**: A central dashboard built with React for administrators to monitor pump networks, oversee complaints, and view overarching system statistics.
+2. **`villager-frontend/`**: A public portal built with React for villagers to lodge complaints, track issue resolution, and view water availability.
+3. **`operator-app/`**: A React Native (Expo) mobile application for field operators.
+4. **`backend/`**: A Node.js/Express server that acts as the central brain. It handles the REST API, integrates with TiDB (MySQL), Cloudinary for image hosting, and Resend for email OTPs.
+
+---
+
+## 💻 Local Development Setup
+
+If you wish to run the code locally on your own machine:
+
+### Prerequisites
+- Node.js (v18+)
+- TiDB or MySQL Database instance
+- Cloudinary Account (for image uploads)
+- Resend API Key (for emails)
+
+### 1. Backend Setup
 ```bash
 cd backend
 npm install
+```
+Create a `.env` file in the `backend/` directory with your database and API credentials, then run:
+```bash
 npm run dev
 ```
 
-## Contributing
+### 2. Frontend Setup (Admin & Villager)
+Open a new terminal for each frontend:
+```bash
+cd admin-frontend
+npm install
+npm run dev 
+```
 
-Make sure to conform to the existing conventions within the respective apps. Regular PRs and reviews help keep the monolithic structure clean.
+### 3. Operator App Setup
+```bash
+cd operator-app
+npm install
+npm run start
+```
