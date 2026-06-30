@@ -2,21 +2,13 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database/db');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const lastSendAt = new Map();
 const otpStore = new Map();
 const OTP_COOLDOWN_MS = 60_000;
 
-// Reusable transporter setup
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.ethereal.email',
-    port: process.env.SMTP_PORT || 587,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    }
-});
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 router.post('/send', async (req, res) => {
     try {
@@ -51,18 +43,21 @@ router.post('/send', async (req, res) => {
         </div>
         `;
 
-        const mailOptions = {
-            from: process.env.SMTP_FROM || 'JalSankalp <no-reply@jalsankalp.local>',
-            to: email,
-            subject: 'Your JalSankalp OTP Verification Code',
-            text: `Your OTP for JalSankalp is: ${otp}. It is valid for 10 minutes.`,
-            html: htmlTemplate
-        };
+        if (resend) {
+            const { data, error } = await resend.emails.send({
+                from: process.env.SMTP_FROM || 'JalSankalp <onboarding@resend.dev>',
+                to: email,
+                subject: 'Your JalSankalp OTP Verification Code',
+                text: `Your OTP for JalSankalp is: ${otp}. It is valid for 10 minutes.`,
+                html: htmlTemplate
+            });
 
-        if (process.env.SMTP_USER) {
-             await transporter.sendMail(mailOptions);
+            if (error) {
+                console.error("Resend API Error:", error);
+                return res.status(500).json({ message: 'Error sending OTP email via Resend' });
+            }
         } else {
-            console.log(`[DEV MODE] Sending OTP ${otp} to ${email} (No SMTP configured)`);
+            console.log(`[DEV MODE] Sending OTP ${otp} to ${email} (No RESEND_API_KEY configured)`);
         }
 
         otpStore.set(email, { otp, expires: Date.now() + 10 * 60 * 1000 });
